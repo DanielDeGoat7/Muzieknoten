@@ -1,0 +1,46 @@
+## --- Visual Studio & .NET ---
+# Gebruikersspecifieke bestanden (zoals vensterposities)
+*.user
+*.userosscache
+*.sln.docuser
+
+# Build resultaten (deze worden opnieuw gegenereerd bij het runnen)
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio tijdelijke bestanden
+.vs/
+.vs*
+Generated\ Files/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Project specifieke instellingen die lokaal blijven
+/secrets.json
+/appsettings.Development.json
+
+## --- Frontend (HTML, CSS, JavaScript, Tone.js) ---
+# Als je npm gebruikt voor Tone.js of andere libraries
+node_modules/
+npm-debug.log*
+
+# Als je compilers gebruikt voor CSS (zoals Sass)
+.sass-cache/
+*.css.map
+
+# Browser instellingen
+.DS_Store
+Thumbs.db
+
+## --- Database (SQLite) ---
+# Belangrijk: Je wilt je lokale database bestand vaak NIET in Git hebben
+# omdat deze telkens verandert als je test.
+*.db
+*.db-shm
+*.db-wal
+
+## --- Publishing ---
+# Bestanden die worden aangemaakt bij het publiceren van je app
+publish/
+*.publishsettings
