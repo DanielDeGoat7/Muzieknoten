@@ -41,9 +41,9 @@ public class ApplicationDbContext : DbContext
         );
 
         modelBuilder.Entity<Resultaat>().HasData(
-            new Resultaat { Id = 1, Score = 85, datetime = DateTime.Now, LeerlingId = 1, OefeningId = 1 },
-            new Resultaat { Id = 2, Score = 92, datetime = DateTime.Now, LeerlingId = 2, OefeningId = 2 },
-            new Resultaat { Id = 3, Score = 98, datetime = DateTime.Now, LeerlingId = 3, OefeningId = 3 }
+            new Resultaat { Id = 1, Score = 85, datetime = new DateTime(2026, 4, 14), LeerlingId = 1, OefeningId = 1 },
+            new Resultaat { Id = 2, Score = 92, datetime = new DateTime(2026, 4, 14), LeerlingId = 2, OefeningId = 2 },
+            new Resultaat { Id = 3, Score = 98, datetime = new DateTime(2026, 4, 14), LeerlingId = 3, OefeningId = 3 }
         );
 
     }
