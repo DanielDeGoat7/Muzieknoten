@@ -1,9 +1,8 @@
 namespace Piano.Models;
 
-public class Leerling
+public class Docent
 {
     public int Id { get; set; }
     public string Naam { get; set; } = string.Empty;
-    public Niveau? Niveau { get; set; }
-    public int KlasId { get; set; }
+
 }
