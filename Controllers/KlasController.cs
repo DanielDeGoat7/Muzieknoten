@@ -21,7 +21,10 @@ namespace Piano.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Klas>>> GetAll()
         {
-            var klassen = await _context.Klassen.ToListAsync();
+            var klassen = await _context.Klassen
+                .Include(k => k.Docent)
+                .Include(k => k.Leerlingen)
+                .ToListAsync();
             return Ok(klassen);
         }
 
