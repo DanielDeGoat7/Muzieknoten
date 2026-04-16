@@ -2,7 +2,37 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Piano</p>
-</div>
+<div id="app-container"></div>
+
+<script id="home-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h1>Welkom bij Muzieknoten</h1>
+    </div>
+</script>
+
+<script id="oefeningen-menu-template" type="text/x-handlebars-template">
+    <div class="oefening-container">
+    <div class="oefening-box">
+    <p class="box-title">Kies hier wat je wilt oefenen</p>
+    <div class="box-grid">
+    <button class="oefening-grid-item" onclick="speelOefening(1, 'Treble Clef')">Treble Cleff</button>
+    <div class="oefening-grid-item disabled">Noten op piano</div>
+    <div class="oefening-grid-item disabled">Bass Clef</div>
+    <div class="oefening-grid-item disabled">Perfect Pitch</div>
+    <div class="oefening-grid-item disabled">Voortekens</div>
+    <div class="oefening-grid-item disabled">Intervals</div>
+    </div>
+    </div>
+    </div>
+</script>
+
+<script id="treble-clef-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h1>Oefening: {{oefeningNaam}}</h1>
+    <div class="piano-placeholder">
+    <p>ToDo: Notenbalken voor Treble Clef...</p>
+    <hr>
+    <button class="btn-save-score" onclick="verstuurScore({{oefeningId}})">Oefening afronden</button>
+    </div>
+    </div>
+</script>
