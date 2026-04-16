@@ -3,15 +3,14 @@
     text-decoration: underline;
 }
 
+.nav-link{
+  font-size: 1.25rem;
+}
+
 html {
   font-size: 14px;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
@@ -23,7 +22,12 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), 
+                      url('https://images.unsplash.com/photo-1552422535-c45813c61732?q=80&w=1920');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; 
+    margin-bottom: 60px;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -39,7 +43,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
+  text-align: center;
+  font-size: 2.5rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
@@ -50,14 +55,23 @@ body {
   gap: 1rem;
   max-width: 600px;
   margin: 0 auto;
+  padding-top: 4rem;
 }
 
 .oefening-grid-item{
-  font-size: 2rem;
-  border-radius: 0.5rem;
-  padding: 2rem;
-  min-height: 120px;
+  font-size: 1.5rem;
+  border-radius: 2.5rem;
+  padding: 1rem;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+}
+
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
 }
