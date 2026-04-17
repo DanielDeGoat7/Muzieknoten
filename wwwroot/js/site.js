@@ -42,6 +42,8 @@ window.verstuurScore = async function(oefeningId) {
     if (response.ok) {
         alert("Top! Je score is opgeslagen.");
         router.navigeer('oefeningen');
+    } else {
+        alert("Oeps, er ging iets mis bij het opslaan van je score.");
     }
 };
 
