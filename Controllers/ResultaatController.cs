@@ -29,6 +29,11 @@ namespace Piano.Controllers
         [HttpPost]
         public async Task<ActionResult<Resultaat>> Create(Resultaat nieuwResultaat)
         {
+            // Mitigatie: ID6 - Validatie van invoer
+            if (nieuwResultaat.Score < 0 || nieuwResultaat.Score > 100)
+            {
+                return BadRequest("Ongeldige score");
+            }
             _context.Resultaten.Add(nieuwResultaat);
             await _context.SaveChangesAsync();
 
