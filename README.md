@@ -73,36 +73,22 @@ Gebruik de volgende types in je commit berichten:
 * `style` — Opmaak, witruimte, missende puntkomma's; geen logische codewijziging.
 * `chore` — Aanpassingen aan tools of libraries (bijv. update Tone.js).
 
-* 🔒 Dreiging 4 – Onbeveiligde verbinding (HTTP)
+## 🔐 Beveiliging & Mitigatie (DP6b)
+In dit project zijn specifieke beveiligingsmaatregelen genomen op basis van de uitgevoerde STRIDE-analyse. Hieronder staan mitigaties beschreven:
 
-De applicatie is aangepast zodat er uitsluitend gebruik wordt gemaakt van HTTPS in plaats van HTTP.
+1. Verbindingsbeveiliging (Dreiging ID 4)
+Dreiging: Denial of Service/Tampering op de dataflow door onbeveiligde verbindingen.
+Implementatie: * In Program.cs is app.UseHttpsRedirection() geactiveerd om een beveiligde verbinding af te dwingen.
+In launchSettings.json is het onbeveiligde HTTP-profiel verwijderd.
+Resultaat: Alle communicatie verloopt via een versleutelde HTTPS-verbinding (TLS 1.3), wat interceptie voorkomt.
 
-Aanpassingen:
+2. Data-integriteit & Validatie (Dreiging ID 6)
+Dreiging: Manipulatie van score-data (Tampering) tijdens het verzenden naar de server.
+Implementatie: * Server-side check: In ResultaatController.cs is een validatie ingebouwd die controleert of de score binnen de toegestane range valt.
+SQL-injectie preventie: Door gebruik te maken van Entity Framework Core worden queries geparametriseerd uitgevoerd, wat SQL-injectie onmogelijk maakt.
+Frontend Feedback: In site.js is foutafhandeling toegevoegd (else-statement) om gebruikers te informeren wanneer data niet correct verwerkt kan worden.
 
-Program.cs
-launchSettings.json
-
-➡️ Hiermee wordt alle communicatie versleuteld en wordt het risico op afluisteren (man-in-the-middle attacks) verminderd.
-
-🛡️ Dreiging 6 – SQL-injectie & input validatie
-
-Er zijn zowel server-side als client-side verbeteringen doorgevoerd.
-
-Server-side (ResultaatController.cs):
-
-Toevoeging van validatiechecks
-Gebruik van Entity Framework Core
-
-➡️ Dit voorkomt SQL-injectie doordat queries geparametriseerd worden uitgevoerd.
-
-Client-side (site.js):
-
-Extra else-conditie toegevoegd
-Geeft een melding wanneer een score niet correct wordt verstuurd
-
-➡️ Dit verbetert de gebruikersfeedback en voorkomt onverwacht gedrag.
-
-📄 Zie ook: Technisch Ontwerp – Hoofdstuk 4.3 Mitigaties voor een uitgebreide toelichting.
+# 📄 Zie ook: Technisch Ontwerp – Hoofdstuk 4.3 Mitigaties.
 
 ## 📦 Release Proces
 1. **Samenvoegen:** Zodra een sprint klaar is, maken we een `release/<versie>` aan vanaf `development`.
