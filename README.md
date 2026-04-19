@@ -43,7 +43,7 @@ Implementatie:
 * In launchSettings.json is het onbeveiligde HTTP-profiel verwijderd.
 * Alle communicatie verloopt via een versleutelde HTTPS-verbinding (TLS 1.3), wat interceptie voorkomt.
 
-3. Data-integriteit & Validatie (Dreiging ID 6)
+2. Data-integriteit & Validatie (Dreiging ID 6)
 Dreiging: Manipulatie van score-data (Tampering) tijdens het verzenden naar de server.
 Implementatie:
 * Server-side check: In ResultaatController.cs is een validatie ingebouwd die controleert of de score binnen de toegestane range valt.
