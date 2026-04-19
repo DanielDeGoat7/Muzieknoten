@@ -33,7 +33,7 @@ Gebruik de volgende types in je commit berichten:
 * `style` — Opmaak, witruimte, missende puntkomma's; geen logische codewijziging.
 * `chore` — Aanpassingen aan tools of libraries (bijv. update Tone.js).
 
-## 🔐 Beveiliging & Mitigatie (DP6b)
+## 🔐 Beveiliging & Mitigatie
 In dit project zijn specifieke beveiligingsmaatregelen genomen op basis van de uitgevoerde STRIDE-analyse. Hieronder staan mitigaties beschreven:
 
 1. Verbindingsbeveiliging (Dreiging ID 4)
