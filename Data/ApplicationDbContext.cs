@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Piano.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Piano.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
