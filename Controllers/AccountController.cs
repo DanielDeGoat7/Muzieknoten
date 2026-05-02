@@ -42,12 +42,12 @@ public class AccountController : Controller
 
                 if (role == "Docent")
                 {
-                    var docent = new Docent { Naam = email };
+                    var docent = new Docent { Naam = email, IdentityUserId = user.Id };
                     _context.Docenten.Add(docent);
                 }
                 else if (role == "Leerling")
                 {
-                    var leerling = new Leerling { Naam = email };
+                    var leerling = new Leerling { Naam = email, IdentityUserId = user.Id };
                     _context.Leerlingen.Add(leerling);
                 }
 
