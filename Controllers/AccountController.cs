@@ -10,12 +10,15 @@ public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ApplicationDbContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _context = context;
     }
+
 
     [HttpGet]
     [AllowAnonymous]
@@ -26,7 +29,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(string email, string password)
+    public async Task<IActionResult> Register(string email, string password, string role)
     {
         if (ModelState.IsValid)
         {
@@ -35,6 +38,21 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, role);
+
+                if (role == "Docent")
+                {
+                    var docent = new Docent { Naam = email };
+                    _context.Docenten.Add(docent);
+                }
+                else if (role == "Leerling")
+                {
+                    var leerling = new Leerling { Naam = email };
+                    _context.Leerlingen.Add(leerling);
+                }
+
+                await _context.SaveChangesAsync();
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
