@@ -61,6 +61,7 @@ public class AccountController : Controller
             {
                 ModelState.AddModelError("", error.Description);
             }
+            TempData["ErrorMessage"] = result.Errors.FirstOrDefault()?.Description;
         }
         return View("login");
     }
@@ -85,7 +86,7 @@ public class AccountController : Controller
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Ongeldige loginpoging.");
+            TempData["ErrorMessage"] = "Inloggegevens zijn onjuist.";
         }
         return View("login");
     }

@@ -55,6 +55,17 @@ window.verstuurScore = async function(oefeningId) {
     }
 };
 
+function checkServerErrors() {
+    const errorElement = document.getElementById('server-error');
+    if (errorElement) {
+        const message = errorElement.getAttribute('data-message');
+        
+        alert("Fout bij registratie: " + message);
+        
+        showRegister(); 
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href.toLowerCase();
 
@@ -64,6 +75,29 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
     // Check of we op de Account pagina zijn
     else if (document.getElementById('account-app-container')) {
+
+        const errorElement = document.getElementById('server-error');
+
+        if (errorElement) {
+            const message = errorElement.getAttribute('data-message');
+            const isLoginFout = message.toLowerCase().includes("inloggegevens");
+
+            if (isLoginFout) {
+                router.navigeer('login');
+                setTimeout(() => {
+                    const loginErrorMsg = document.getElementById('login-error-msg');
+                    if (loginErrorMsg) loginErrorMsg.textContent = message;
+                }, 50);
+            } else {
+                router.navigeer('register');
+                setTimeout(() => {
+                    const registerErrorMsg = document.getElementById('register-error-msg');
+                    if (registerErrorMsg) registerErrorMsg.textContent = message;
+                }, 50);
+            }
+            return;
+        }
+
         if (url.includes('register')) {
             router.navigeer('register');
         } else if (url.includes('login')) {

@@ -2,6 +2,10 @@
     ViewData["Title"] = "Account Page";
     Layout = null;
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="server-error" data-message="@TempData["ErrorMessage"]" style="display:none;"></div>
+}
 
 <head>
     <meta charset="utf-8" />
@@ -43,6 +47,7 @@
     <div class="d-grid">
     <button type="submit" class="btn btn-success btn-lg">Inloggen</button>
     </div>
+    <div id="login-error-msg" class="text-danger mt-2 text-center"></div>
     <button type="button" class="btn btn-link w-100 mt-2 text-decoration-none text-muted" onclick="initApp()">Terug</button>
     </form>
     </div>
@@ -75,6 +80,7 @@
     <div class="d-grid">
     <button type="submit" class="btn btn-primary btn-lg">Registreren</button>
     </div>
+    <div id="register-error-msg" class="text-danger mt-2 text-center"></div>
     <button type="button" class="btn btn-link w-100 mt-2 text-decoration-none text-muted" onclick="initApp()">Terug</button>
     </form>
     </div>
