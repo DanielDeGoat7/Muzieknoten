@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Piano.Data;
 
@@ -10,9 +11,11 @@ using Piano.Data;
 namespace Piano.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260502204327_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -220,7 +223,6 @@ namespace Piano.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Naam")
@@ -235,13 +237,11 @@ namespace Piano.Migrations
                         new
                         {
                             Id = 1,
-                            IdentityUserId = "",
                             Naam = "Daniël Dedden"
                         },
                         new
                         {
                             Id = 2,
-                            IdentityUserId = "",
                             Naam = "Jan de Boer"
                         });
                 });
@@ -290,7 +290,7 @@ namespace Piano.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("KlasId")
+                    b.Property<int>("KlasId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Naam")
@@ -486,7 +486,9 @@ namespace Piano.Migrations
                 {
                     b.HasOne("Piano.Models.Klas", null)
                         .WithMany("Leerlingen")
-                        .HasForeignKey("KlasId");
+                        .HasForeignKey("KlasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Piano.Models.Klas", b =>

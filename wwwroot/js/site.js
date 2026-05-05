@@ -1,26 +1,34 @@
 ﻿window.router = {
     navigeer(scherm, extraData = {}) {
-        const container = document.getElementById('app-container');
+        const container = document.getElementById('app-container') || document.getElementById('account-app-container');
         if (!container) return;
 
         const render = (templateId, data = {}) => {
             const element = document.getElementById(templateId);
-            if (!element) {
-                console.error("Template niet gevonden:", templateId);
-                return;
-            }
+            if (!element) return;
             const source = element.innerHTML;
             const template = Handlebars.compile(source);
             container.innerHTML = template(data);
         };
 
+        // Algemene schermen
         if (scherm === 'oefeningen') render("oefeningen-menu-template");
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
+
+
+        // Account gerelateerde schermen
+        else if (scherm === 'account-start') render("account-template");
+        else if (scherm === 'login') render("login-template");
+        else if (scherm === 'register') render("register-template");
     }
 };
 
-// Functies voor knoppen ook globaal maken
+window.showLogin = () => router.navigeer('login');
+window.showRegister = () => router.navigeer('register');
+window.initApp = () => router.navigeer('account-start');
+
+
 window.speelOefening = function(id, naam) {
     router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
 };
@@ -47,9 +55,55 @@ window.verstuurScore = async function(oefeningId) {
     }
 };
 
-// Start de app zodra de pagina klaar is
+function checkServerErrors() {
+    const errorElement = document.getElementById('server-error');
+    if (errorElement) {
+        const message = errorElement.getAttribute('data-message');
+        
+        alert("Fout bij registratie: " + message);
+        
+        showRegister(); 
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    const url = window.location.href.toLowerCase();
+
+    // Check of we op de Piano pagina zijn
     if (document.getElementById('app-container')) {
         router.navigeer('home');
+    } 
+    // Check of we op de Account pagina zijn
+    else if (document.getElementById('account-app-container')) {
+
+        const errorElement = document.getElementById('server-error');
+
+        if (errorElement) {
+            const message = errorElement.getAttribute('data-message');
+            const isLoginFout = message.toLowerCase().includes("inloggegevens");
+
+            if (isLoginFout) {
+                router.navigeer('login');
+                setTimeout(() => {
+                    const loginErrorMsg = document.getElementById('login-error-msg');
+                    if (loginErrorMsg) loginErrorMsg.textContent = message;
+                }, 50);
+            } else {
+                router.navigeer('register');
+                setTimeout(() => {
+                    const registerErrorMsg = document.getElementById('register-error-msg');
+                    if (registerErrorMsg) registerErrorMsg.textContent = message;
+                }, 50);
+            }
+            return;
+        }
+
+        if (url.includes('register')) {
+            router.navigeer('register');
+        } else if (url.includes('login')) {
+            router.navigeer('login');
+        } else {
+            router.navigeer('account-start');
+        }
     }
 });

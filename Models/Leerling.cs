@@ -5,5 +5,6 @@ public class Leerling
     public int Id { get; set; }
     public string Naam { get; set; } = string.Empty;
     public Niveau? Niveau { get; set; }
-    public int KlasId { get; set; }
+    public int? KlasId { get; set; }
+    public string IdentityUserId { get; set; } = string.Empty;
 }
