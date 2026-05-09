@@ -12,7 +12,11 @@
         };
 
         // Algemene schermen
-        if (scherm === 'oefeningen') render("oefeningen-menu-template");
+        if (scherm === 'oefeningen') {
+            const reponse = fetch('/api/Oefening')
+            const data = await reponse.json();
+            render("oefeningen-menu-template");
+        }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
 
@@ -33,27 +37,28 @@ window.speelOefening = function(id, naam) {
     router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
 };
 
-window.verstuurScore = async function(oefeningId) {
-    const resultaat = {
-        score: 95,
-        leerlingId: 1,
-        oefeningId: oefeningId,
-        datetime: new Date().toISOString()
-    };
+window.verstuurScoreNaarServer = async function(behaaldeScore, oefeningId) {
+    const url = `/api/Oefening?score=${behaaldeScore}&oefeningId=${oefeningId}`;
 
-    const response = await fetch('/api/resultaat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resultaat)
-    });
+    try {
+        const reponse = await fetch(url, {
+             method: 'POST' 
+        });
 
-    if (response.ok) {
-        alert("Top! Je score is opgeslagen.");
-        router.navigeer('oefeningen');
-    } else {
-        alert("Oeps, er ging iets mis bij het opslaan van je score.");
+        if (reponse.ok) {
+            alert("Score succesvol opgeslagen!");
+            router.navigeer('oefeningen');
+        } else {
+            const errorData = await reponse.text();
+            console.error("Fout bij opslaan score:", errorData);
+            alert("Fout bij opslaan score. ");
+        }
+    } catch (error) {
+        console.error("Netwerkfout bij opslaan score:", error);
+        alert("Netwerkfout bij opslaan score. Probeer het later opnieuw.");
     }
-};
+}
+
 
 function checkServerErrors() {
     const errorElement = document.getElementById('server-error');
@@ -69,11 +74,9 @@ function checkServerErrors() {
 document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href.toLowerCase();
 
-    // Check of we op de Piano pagina zijn
     if (document.getElementById('app-container')) {
         router.navigeer('home');
     } 
-    // Check of we op de Account pagina zijn
     else if (document.getElementById('account-app-container')) {
 
         const errorElement = document.getElementById('server-error');
