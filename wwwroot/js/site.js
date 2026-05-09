@@ -13,9 +13,11 @@
 
         // Algemene schermen
         if (scherm === 'oefeningen') {
-            const reponse = fetch('/api/Oefening')
-            const data = await reponse.json();
-            render("oefeningen-menu-template");
+            fetch('/api/Oefening')
+                .then(response => response.json())
+                .then(data => {
+                    render("oefeningen-menu-template", { oefeningen: data })
+                }); 
         }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
@@ -31,11 +33,6 @@
 window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');
 window.initApp = () => router.navigeer('account-start');
-
-
-window.speelOefening = function(id, naam) {
-    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
-};
 
 window.verstuurScoreNaarServer = async function(behaaldeScore, oefeningId) {
     const url = `/api/Oefening?score=${behaaldeScore}&oefeningId=${oefeningId}`;
@@ -70,6 +67,20 @@ function checkServerErrors() {
         showRegister(); 
     }
 }
+
+window.speelOefening = function(id, naam) {
+    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
+};
+
+// Noten voor Treble Clef
+const alleNoten = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+function kiesWillekeurigeNoot() {
+    const randomIndex = Math.floor(Math.random() * alleNoten.length);
+    return alleNoten[randomIndex];
+}
+
+let huidigeNoot = null;
+console.log("Test" + huidigeNoot);
 
 document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href.toLowerCase();

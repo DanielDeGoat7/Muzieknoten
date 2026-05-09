@@ -51,9 +51,9 @@ public class ApplicationDbContext : IdentityDbContext
         );
 
         modelBuilder.Entity<Oefening>().HasData(
-            new Oefening { Id = 1, Naam = "Oefening 1", Niveau = Niveau.Beginner },
-            new Oefening { Id = 2, Naam = "Oefening 2", Niveau = Niveau.Gevorderd },
-            new Oefening { Id = 3, Naam = "Oefening 3", Niveau = Niveau.Expert }
+            new Oefening { Id = 1, Naam = "Treble Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 2, Naam = "Bass Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 3, Naam = "Beide Clefs", Niveau = Niveau.Beginner }
         );
 
     }

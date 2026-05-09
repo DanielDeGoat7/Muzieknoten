@@ -15,12 +15,15 @@
     <div class="oefening-box">
     <p class="box-title">Kies hier wat je wilt oefenen</p>
     <div class="box-grid">
-    <button class="oefening-grid-item" onclick="speelOefening(1, 'Treble Clef')">Treble Cleff</button>
-    <div class="oefening-grid-item disabled">Noten op piano</div>
-    <div class="oefening-grid-item disabled">Bass Clef</div>
-    <div class="oefening-grid-item disabled">Perfect Pitch</div>
-    <div class="oefening-grid-item disabled">Voortekens</div>
-    <div class="oefening-grid-item disabled">Intervals</div>
+    {{#each oefeningen}}
+    <button class="oefening-grid-item" onclick="speelOefening({{id}}, '{{naam}}')">
+    {{naam}}
+    </button>
+    {{else}}
+    <p>Geen oefeningen gevonden...</p>
+    {{/each}}
+                
+    <div class="oefening-grid-item disabled">Bass Clef (Binnenkort)</div>
     </div>
     </div>
     </div>
@@ -30,9 +33,12 @@
     <div class="view text-center">
     <h1>Oefening: {{oefeningNaam}}</h1>
     <div class="piano-placeholder">
-    <p>ToDo: Notenbalken voor Treble Clef...</p>
+    <p>ID van deze oefening: {{oefeningId}}</p>
+    <p>ToDo: Notenbalken en Piano logica...</p>
     <hr>
-    <button class="btn-save-score" onclick="verstuurScore({{oefeningId}})">Oefening afronden</button>
+    <button class="btn-save-score" onclick="verstuurScoreNaarServer(85, {{oefeningId}})">
+    Oefening afronden en score opslaan
+    </button>
     </div>
     </div>
 </script>
