@@ -68,19 +68,62 @@ function checkServerErrors() {
     }
 }
 
-window.speelOefening = function(id, naam) {
-    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
-};
 
-// Noten voor Treble Clef
+// Clef Oefening
+let goedeAntwoorden = 0;
+let totaalVragen = 0;
+let huidigeNoot = "";
+let huidigeOefeningId = null;
+
 const alleNoten = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-function kiesWillekeurigeNoot() {
-    const randomIndex = Math.floor(Math.random() * alleNoten.length);
-    return alleNoten[randomIndex];
+window.startNieuweVraag = function() {
+     huidigeNoot = alleNoten[Math.floor(Math.random() * alleNoten.length)];
+     console.log("noot " + huidigeNoot);
+
+     const feedbackElement = document.getElementById("feedback-bericht");
+     if (feedbackElement) feedbackElement.textContent = "Welke noot is dit?";
+
+     // Hier komt de noot op balk 
 }
 
-let huidigeNoot = null;
-console.log("Test" + huidigeNoot);
+window.checkAntwoord = function(antwoord) {
+    totaalVragen++;
+    const feedbackEl = document.getElementById("feedback-bericht");
+
+    if (antwoord === huidigeNoot) {
+        goedeAntwoorden++;
+        feedbackEl.textContent = "Correct! Goed gedaan.";
+        feedbackEl.style.color = "green";
+    } else {
+        feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNoot;
+        feedbackEl.style.color = "red";
+    }
+    setTimeout(() => {
+        startNieuweVraag();
+    }, 1000);
+}
+
+window.stopEnOpslaan = function() {
+    if (totaalVragen === 0) {
+        alert("Je hebt nog geen vragen beantwoord!");
+        return;
+    }
+
+    const eindScore = Math.round((goedeAntwoorden / totaalVragen) * 100);
+    window.verstuurScoreNaarServer(eindScore, huidigeOefeningId);
+    goedeAntwoorden = 0;
+    totaalVragen = 0;
+}
+
+window.speelOefening = function(id, naam) {
+    huidigeOefeningId = id;
+    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
+    setTimeout(() => {
+        startNieuweVraag();
+    }, 50);
+};
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href.toLowerCase();
