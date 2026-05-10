@@ -74,6 +74,7 @@ let goedeAntwoorden = 0;
 let totaalVragen = 0;
 let huidigeNootPositie = null;
 let huidigeOefeningId = null;
+let isBezig = false;
 
 
 const alleNootPosities = [
@@ -93,6 +94,7 @@ const alleNootPosities = [
 
 
 window.startNieuweVraag = function() {
+    isBezig = false;
     huidigeNootPositie = alleNootPosities[Math.floor(Math.random() * alleNootPosities.length)];
 
     const nootSvgElement = document.getElementById("noot-bolletje-svg");
@@ -104,8 +106,13 @@ window.startNieuweVraag = function() {
 }
 
 window.checkAntwoord = function(antwoord) {
+    if (isBezig) return;
+
+
     const feedbackEl = document.getElementById("feedback-bericht");
     if (!feedbackEl) return;
+
+    isBezig = true;
 
     feedbackEl.textContent = "Controleren..."; 
     feedbackEl.style.color = "orange";
@@ -146,6 +153,7 @@ window.stopEnOpslaan = function() {
     window.verstuurScoreNaarServer(eindScore, huidigeOefeningId);
     goedeAntwoorden = 0;
     totaalVragen = 0;
+    isBezig = false;
 }
 
 window.speelOefening = function(id, naam) {
