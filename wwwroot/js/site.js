@@ -69,7 +69,7 @@ function checkServerErrors() {
 }
 
 
-// Clef Oefening
+// Treble Clef Oefening
 let goedeAntwoorden = 0;
 let totaalVragen = 0;
 let huidigeNootPositie = null;
@@ -77,18 +77,18 @@ let huidigeOefeningId = null;
 
 
 const alleNootPosities = [
-    { naam: "C (midden)",  y: 110 },  // hulplijn onder
-    { naam: "D",           y: 105 },  // onder onderste lijn
-    { naam: "E",           y: 100 },  // op onderste lijn
-    { naam: "F",           y: 95 },   // tussen 1e en 2e lijn
-    { naam: "G",           y: 90 },   // op 2e lijn
-    { naam: "A",           y: 85 },   // tussen 2e en 3e lijn
-    { naam: "B",           y: 80 },   // op 3e lijn
-    { naam: "C (hoger)",   y: 75 },   // tussen 3e en 4e lijn
-    { naam: "D (hoger)",   y: 70 },   // op 4e lijn
-    { naam: "E (hoger)",   y: 65 },   // tussen 4e en 5e lijn
-    { naam: "F (hoger)",   y: 60 },   // op 5e lijn
-    { naam: "G (hoger)",   y: 55 },   // hulplijn boven
+    { naam: "C (midden)", letter: "C", y: 110 },  // hulplijn onder
+    { naam: "D",           letter: "D", y: 105 },  // onder onderste lijn
+    { naam: "E",           letter: "E", y: 100 },  // op onderste lijn
+    { naam: "F",           letter: "F", y: 95 },   // tussen 1e en 2e lijn
+    { naam: "G",           letter: "G", y: 90 },   // op 2e lijn
+    { naam: "A",           letter: "A", y: 85 },   // tussen 2e en 3e lijn
+    { naam: "B",           letter: "B", y: 80 },   // op 3e lijn
+    { naam: "C (hoger)",   letter: "C", y: 75 },   // tussen 3e en 4e lijn
+    { naam: "D (hoger)",   letter: "D", y: 70 },   // op 4e lijn
+    { naam: "E (hoger)",   letter: "E", y: 65 },   // tussen 4e en 5e lijn
+    { naam: "F (hoger)",   letter: "F", y: 60 },   // op 5e lijn
+    { naam: "G (hoger)",   letter: "G", y: 55 },   // hulplijn boven
 ];
 
 
@@ -116,12 +116,12 @@ window.checkAntwoord = function(antwoord) {
 
         const isCorrect = (antwoord === huidigeNootPositie.naam.charAt(0));
 
-        if (antwoord === huidigeNootPositie.naam.charAt(0)) {
+        if (antwoord === huidigeNootPositie.letter.charAt(0)) {
             goedeAntwoorden++;
             feedbackEl.textContent = "Correct! Goed gedaan.";
             feedbackEl.style.color = "green";
         } else {
-            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNootPositie.naam;
+            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNootPositie.letter;
             feedbackEl.style.color = "red";
         }
 
