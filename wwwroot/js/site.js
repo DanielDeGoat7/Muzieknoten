@@ -96,15 +96,11 @@ window.startNieuweVraag = function() {
     huidigeNootPositie = alleNootPosities[Math.floor(Math.random() * alleNootPosities.length)];
 
     const nootSvgElement = document.getElementById("noot-bolletje-svg");
-    const debugLabel = document.getElementById("debug-noot-label");
 
     if (nootSvgElement) {
         nootSvgElement.setAttribute("cy", huidigeNootPositie.y);
     }
 
-    if (debugLabel) {
-        debugLabel.textContent = "Debug: " + huidigeNootPositie.naam    ;
-    }
 }
 
 window.checkAntwoord = function(antwoord) {
