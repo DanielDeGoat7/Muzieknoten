@@ -72,33 +72,38 @@ function checkServerErrors() {
 // Clef Oefening
 let goedeAntwoorden = 0;
 let totaalVragen = 0;
-let huidigeNoot = "";
+let huidigeNootPositie = null;
 let huidigeOefeningId = null;
 
-const alleNoten = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+const alleNootPosities = [
+    { naam: "C (midden)",  y: 110 },  // hulplijn onder
+    { naam: "D",           y: 105 },  // onder onderste lijn
+    { naam: "E",           y: 100 },  // op onderste lijn
+    { naam: "F",           y: 95 },   // tussen 1e en 2e lijn
+    { naam: "G",           y: 90 },   // op 2e lijn
+    { naam: "A",           y: 85 },   // tussen 2e en 3e lijn
+    { naam: "B",           y: 80 },   // op 3e lijn
+    { naam: "C (hoger)",   y: 75 },   // tussen 3e en 4e lijn
+    { naam: "D (hoger)",   y: 70 },   // op 4e lijn
+    { naam: "E (hoger)",   y: 65 },   // tussen 4e en 5e lijn
+    { naam: "F (hoger)",   y: 60 },   // op 5e lijn
+    { naam: "G (hoger)",   y: 55 },   // hulplijn boven
+];
+
+
 window.startNieuweVraag = function() {
-    huidigeNoot = alleNoten[Math.floor(Math.random() * alleNoten.length)];
-    
+    huidigeNootPositie = alleNootPosities[Math.floor(Math.random() * alleNootPosities.length)];
+
     const nootSvgElement = document.getElementById("noot-bolletje-svg");
     const debugLabel = document.getElementById("debug-noot-label");
 
-    // Exacte mapping voor lijnen op 60,70,80,90,100
-    const coordinaten = {
-        'C': 110, // Hulplijn onder de balk
-        'D': 105, // Hangt onder de onderste lijn
-        'E': 100, // OP de onderste lijn (100)
-        'F': 95,  // Tussen onderste en 2e lijn
-        'G': 90,  // OP de 2e lijn (90)
-        'A': 85,  // Tussen 2e en 3e lijn
-        'B': 80   // OP de 3e lijn (80)
-    };
-
     if (nootSvgElement) {
-        nootSvgElement.setAttribute("cy", coordinaten[huidigeNoot]);
+        nootSvgElement.setAttribute("cy", huidigeNootPositie.y);
     }
 
     if (debugLabel) {
-        debugLabel.textContent = "Debug: " + huidigeNoot;
+        debugLabel.textContent = "Debug: " + huidigeNootPositie.naam    ;
     }
 }
 
@@ -113,12 +118,14 @@ window.checkAntwoord = function(antwoord) {
     setTimeout(() => {
         const feedbackEl = document.getElementById("feedback-bericht");
 
-        if (antwoord === huidigeNoot) {
+        const isCorrect = (antwoord === huidigeNootPositie.naam.charAt(0));
+
+        if (antwoord === huidigeNootPositie.naam.charAt(0)) {
             goedeAntwoorden++;
             feedbackEl.textContent = "Correct! Goed gedaan.";
             feedbackEl.style.color = "green";
         } else {
-            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNoot;
+            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNootPositie.naam;
             feedbackEl.style.color = "red";
         }
 
