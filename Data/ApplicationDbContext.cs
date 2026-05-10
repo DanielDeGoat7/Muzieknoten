@@ -19,6 +19,21 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Klas>()
+            .HasOne(k => k.Docent)
+            .WithMany()
+            .HasForeignKey(k => k.DocentId);
+
+        modelBuilder.Entity<Resultaat>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId);
+
+        modelBuilder.Entity<Resultaat>()
+            .HasOne(r => r.Oefening)
+            .WithMany()
+            .HasForeignKey(r => r.OefeningId);
+
         modelBuilder.Entity<Leerling>().HasData(
             new Leerling { Id = 1, Naam = "Anna Jansen", Niveau = Niveau.Beginner, KlasId = 1 },
             new Leerling { Id = 2, Naam = "Bram de Vries", Niveau = Niveau.Gevorderd, KlasId = 1 },
@@ -36,15 +51,9 @@ public class ApplicationDbContext : IdentityDbContext
         );
 
         modelBuilder.Entity<Oefening>().HasData(
-            new Oefening { Id = 1, Naam = "Oefening 1", Niveau = Niveau.Beginner },
-            new Oefening { Id = 2, Naam = "Oefening 2", Niveau = Niveau.Gevorderd },
-            new Oefening { Id = 3, Naam = "Oefening 3", Niveau = Niveau.Expert }
-        );
-
-        modelBuilder.Entity<Resultaat>().HasData(
-            new Resultaat { Id = 1, Score = 85, datetime = new DateTime(2026, 4, 14), LeerlingId = 1, OefeningId = 1 },
-            new Resultaat { Id = 2, Score = 92, datetime = new DateTime(2026, 4, 14), LeerlingId = 2, OefeningId = 2 },
-            new Resultaat { Id = 3, Score = 98, datetime = new DateTime(2026, 4, 14), LeerlingId = 3, OefeningId = 3 }
+            new Oefening { Id = 1, Naam = "Treble Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 2, Naam = "Bass Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 3, Naam = "Beide Clefs", Niveau = Niveau.Beginner }
         );
 
     }

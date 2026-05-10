@@ -12,7 +12,13 @@
         };
 
         // Algemene schermen
-        if (scherm === 'oefeningen') render("oefeningen-menu-template");
+        if (scherm === 'oefeningen') {
+            fetch('/api/Oefening')
+                .then(response => response.json())
+                .then(data => {
+                    render("oefeningen-menu-template", { oefeningen: data })
+                }); 
+        }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
 
@@ -28,32 +34,28 @@ window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');
 window.initApp = () => router.navigeer('account-start');
 
+window.verstuurScoreNaarServer = async function(behaaldeScore, oefeningId) {
+    const url = `/api/Oefening?score=${behaaldeScore}&oefeningId=${oefeningId}`;
 
-window.speelOefening = function(id, naam) {
-    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
-};
+    try {
+        const reponse = await fetch(url, {
+             method: 'POST' 
+        });
 
-window.verstuurScore = async function(oefeningId) {
-    const resultaat = {
-        score: 95,
-        leerlingId: 1,
-        oefeningId: oefeningId,
-        datetime: new Date().toISOString()
-    };
-
-    const response = await fetch('/api/resultaat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resultaat)
-    });
-
-    if (response.ok) {
-        alert("Top! Je score is opgeslagen.");
-        router.navigeer('oefeningen');
-    } else {
-        alert("Oeps, er ging iets mis bij het opslaan van je score.");
+        if (reponse.ok) {
+            alert("Score succesvol opgeslagen!");
+            router.navigeer('oefeningen');
+        } else {
+            const errorData = await reponse.text();
+            console.error("Fout bij opslaan score:", errorData);
+            alert("Fout bij opslaan score. ");
+        }
+    } catch (error) {
+        console.error("Netwerkfout bij opslaan score:", error);
+        alert("Netwerkfout bij opslaan score. Probeer het later opnieuw.");
     }
-};
+}
+
 
 function checkServerErrors() {
     const errorElement = document.getElementById('server-error');
@@ -66,14 +68,110 @@ function checkServerErrors() {
     }
 }
 
+
+// Treble Clef Oefening
+let goedeAntwoorden = 0;
+let totaalVragen = 0;
+let huidigeNootPositie = null;
+let huidigeOefeningId = null;
+let isBezig = false;
+
+
+const alleNootPosities = [
+    { naam: "C (midden)", letter: "C", y: 110 },  // hulplijn onder
+    { naam: "D",           letter: "D", y: 105 },  // onder onderste lijn
+    { naam: "E",           letter: "E", y: 100 },  // op onderste lijn
+    { naam: "F",           letter: "F", y: 95 },   // tussen 1e en 2e lijn
+    { naam: "G",           letter: "G", y: 90 },   // op 2e lijn
+    { naam: "A",           letter: "A", y: 85 },   // tussen 2e en 3e lijn
+    { naam: "B",           letter: "B", y: 80 },   // op 3e lijn
+    { naam: "C (hoger)",   letter: "C", y: 75 },   // tussen 3e en 4e lijn
+    { naam: "D (hoger)",   letter: "D", y: 70 },   // op 4e lijn
+    { naam: "E (hoger)",   letter: "E", y: 65 },   // tussen 4e en 5e lijn
+    { naam: "F (hoger)",   letter: "F", y: 60 },   // op 5e lijn
+    { naam: "G (hoger)",   letter: "G", y: 55 },   // hulplijn boven
+];
+
+
+window.startNieuweVraag = function() {
+    isBezig = false;
+    huidigeNootPositie = alleNootPosities[Math.floor(Math.random() * alleNootPosities.length)];
+
+    const nootSvgElement = document.getElementById("noot-bolletje-svg");
+
+    if (nootSvgElement) {
+        nootSvgElement.setAttribute("cy", huidigeNootPositie.y);
+    }
+
+}
+
+window.checkAntwoord = function(antwoord) {
+    if (isBezig) return;
+
+
+    const feedbackEl = document.getElementById("feedback-bericht");
+    if (!feedbackEl) return;
+
+    isBezig = true;
+
+    feedbackEl.textContent = "Controleren..."; 
+    feedbackEl.style.color = "orange";
+    totaalVragen++;
+    
+    setTimeout(() => {
+        const feedbackEl = document.getElementById("feedback-bericht");
+
+        const isCorrect = (antwoord === huidigeNootPositie.naam.charAt(0));
+
+        if (antwoord === huidigeNootPositie.letter.charAt(0)) {
+            goedeAntwoorden++;
+            feedbackEl.textContent = "Correct! Goed gedaan.";
+            feedbackEl.style.color = "green";
+        } else {
+            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNootPositie.letter;
+            feedbackEl.style.color = "red";
+        }
+
+        const tellerEl = document.getElementById("vraag-teller");
+        if (tellerEl) tellerEl.textContent = `Beantwoord: ${totaalVragen}`;
+
+        setTimeout(() => {
+            feedbackEl.textContent = "Welke noot is dit?";
+            feedbackEl.style.color = "black";
+            startNieuweVraag();
+        }, 1000);
+    }, 150);
+}
+
+window.stopEnOpslaan = function() {
+    if (totaalVragen === 0) {
+        alert("Je hebt nog geen vragen beantwoord!");
+        return;
+    }
+
+    const eindScore = Math.round((goedeAntwoorden / totaalVragen) * 100);
+    window.verstuurScoreNaarServer(eindScore, huidigeOefeningId);
+    goedeAntwoorden = 0;
+    totaalVragen = 0;
+    isBezig = false;
+}
+
+window.speelOefening = function(id, naam) {
+    huidigeOefeningId = id;
+    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
+    setTimeout(() => {
+        startNieuweVraag();
+    }, 50);
+};
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href.toLowerCase();
 
-    // Check of we op de Piano pagina zijn
     if (document.getElementById('app-container')) {
         router.navigeer('home');
     } 
-    // Check of we op de Account pagina zijn
     else if (document.getElementById('account-app-container')) {
 
         const errorElement = document.getElementById('server-error');

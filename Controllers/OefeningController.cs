@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +8,7 @@ using Piano.Models;
 
 namespace Piano.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
@@ -16,6 +19,34 @@ namespace Piano.Controllers
         public OefeningController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SlaScoreOp(int score, int oefeningId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Gebruiker niet gevonden");
+            }
+
+            var resultaat = new Resultaat
+            {
+                Score = score,
+                OefeningId = oefeningId,
+                UserId = userId,
+                datetime = DateTime.Now
+            };
+
+            _context.Resultaten.Add(resultaat);
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                succes = true,
+                message = "Score succesvol opgeslagen",
+                resultaat
+            });
         }
 
         [HttpGet]
