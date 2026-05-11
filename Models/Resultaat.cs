@@ -6,6 +6,8 @@ public class Resultaat
 {
     public int Id { get; set; }
     public int Score { get; set; }
+    public int AantalVragen { get; set; }
+    public int GoedeAntwoorden { get; set; }
     public DateTime datetime { get; set; } = DateTime.Now;
 
     public string UserId { get; set; } = string.Empty;
@@ -13,4 +15,6 @@ public class Resultaat
 
     public int OefeningId { get; set; }
     public virtual Oefening? Oefening { get; set; } = null!;
+
+    public string WeergaveScore => $"{GoedeAntwoorden} / {AantalVragen}";
 }

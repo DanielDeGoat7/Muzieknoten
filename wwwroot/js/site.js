@@ -35,8 +35,8 @@ window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');
 window.initApp = () => router.navigeer('account-start');
 
-window.verstuurScoreNaarServer = async function(behaaldeScore, oefeningId) {
-    const url = `/api/Oefening?score=${behaaldeScore}&oefeningId=${oefeningId}`;
+window.verstuurScoreNaarServer = async function(goedeAntwoorden, aantalVragen, oefeningId) {
+    const url = `/api/Oefening?goedeAntwoorden=${goedeAntwoorden}&aantalVragen=${aantalVragen}&oefeningId=${oefeningId}`;
 
     try {
         const reponse = await fetch(url, {
@@ -136,8 +136,7 @@ class MuziekOefening {
             return;
         }
 
-        const eindScore = Math.round((this.goedeAntwoorden / this.totaalVragen) * 100);
-        window.verstuurScoreNaarServer(eindScore, this.huidigeOefeningId);
+        window.verstuurScoreNaarServer(this.goedeAntwoorden, this.totaalVragen, this.huidigeOefeningId);
         this.goedeAntwoorden = 0;
         this.totaalVragen = 0;
         this.isBezig = false;

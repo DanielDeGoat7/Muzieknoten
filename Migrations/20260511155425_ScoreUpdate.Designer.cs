@@ -11,8 +11,8 @@ using Piano.Data;
 namespace Piano.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260502204754_KlasId")]
-    partial class KlasId
+    [Migration("20260511155425_ScoreUpdate")]
+    partial class ScoreUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -357,20 +357,20 @@ namespace Piano.Migrations
                         new
                         {
                             Id = 1,
-                            Naam = "Oefening 1",
+                            Naam = "Treble Clef",
                             Niveau = 1
                         },
                         new
                         {
                             Id = 2,
-                            Naam = "Oefening 2",
-                            Niveau = 2
+                            Naam = "Bass Clef",
+                            Niveau = 1
                         },
                         new
                         {
                             Id = 3,
-                            Naam = "Oefening 3",
-                            Niveau = 3
+                            Naam = "Beide Clefs",
+                            Niveau = 1
                         });
                 });
 
@@ -380,7 +380,10 @@ namespace Piano.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeerlingId")
+                    b.Property<int>("AantalVragen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GoedeAntwoorden")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("OefeningId")
@@ -389,38 +392,20 @@ namespace Piano.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("datetime")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Resultaten");
+                    b.HasIndex("OefeningId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            LeerlingId = 1,
-                            OefeningId = 1,
-                            Score = 85,
-                            datetime = new DateTime(2026, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            LeerlingId = 2,
-                            OefeningId = 2,
-                            Score = 92,
-                            datetime = new DateTime(2026, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            LeerlingId = 3,
-                            OefeningId = 3,
-                            Score = 98,
-                            datetime = new DateTime(2026, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Resultaten");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -490,6 +475,25 @@ namespace Piano.Migrations
                     b.HasOne("Piano.Models.Klas", null)
                         .WithMany("Leerlingen")
                         .HasForeignKey("KlasId");
+                });
+
+            modelBuilder.Entity("Piano.Models.Resultaat", b =>
+                {
+                    b.HasOne("Piano.Models.Oefening", "Oefening")
+                        .WithMany()
+                        .HasForeignKey("OefeningId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Oefening");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Piano.Models.Klas", b =>

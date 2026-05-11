@@ -23,7 +23,7 @@ namespace Piano.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SlaScoreOp(int score, int oefeningId)
+        public async Task<IActionResult> SlaScoreOp(int goedeAntwoorden, int aantalVragen, int oefeningId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -31,9 +31,13 @@ namespace Piano.Controllers
                 return BadRequest("Gebruiker niet gevonden");
             }
 
+            int score = (int)Math.Round((double)goedeAntwoorden / aantalVragen * 100);
+
             var resultaat = new Resultaat
             {
                 Score = score,
+                GoedeAntwoorden = goedeAntwoorden,
+                AantalVragen = aantalVragen,
                 OefeningId = oefeningId,
                 UserId = userId,
                 datetime = DateTime.Now
