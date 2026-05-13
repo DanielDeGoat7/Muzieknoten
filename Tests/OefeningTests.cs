@@ -7,6 +7,8 @@ public class MuzieknotenTests
 {
     private const string BaseUrl = "https://localhost:7059";
 
+    // Maak een account aan met email: hallo@a.nl en wachtwoord 123456 voordat je deze tests uitvoert
+
     [TestMethod]
     public async Task TrebleOefeningAntwoordCheck()
     {
