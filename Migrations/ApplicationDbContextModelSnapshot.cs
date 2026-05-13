@@ -377,6 +377,12 @@ namespace Piano.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AantalVragen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GoedeAntwoorden")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("OefeningId")
                         .HasColumnType("INTEGER");
 

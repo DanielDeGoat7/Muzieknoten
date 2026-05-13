@@ -20,6 +20,7 @@
                 }); 
         }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
+        else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
 
 
@@ -34,8 +35,8 @@ window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');
 window.initApp = () => router.navigeer('account-start');
 
-window.verstuurScoreNaarServer = async function(behaaldeScore, oefeningId) {
-    const url = `/api/Oefening?score=${behaaldeScore}&oefeningId=${oefeningId}`;
+window.verstuurScoreNaarServer = async function(goedeAntwoorden, aantalVragen, oefeningId) {
+    const url = `/api/Oefening?goedeAntwoorden=${goedeAntwoorden}&aantalVragen=${aantalVragen}&oefeningId=${oefeningId}`;
 
     try {
         const reponse = await fetch(url, {
@@ -68,16 +69,92 @@ function checkServerErrors() {
     }
 }
 
+class MuziekOefening {
+    constructor(config) {
+        this.naam = config.naam;
+        this.suffix = config.suffix;
+        this.notenPosities = config.notenPosities;
+        this.svgElementId = config.svgElementId;
+        this.feedbackElementId = config.feedbackElementId;
+        this.tellerElementId = config.tellerElementId;
 
-// Treble Clef Oefening
-let goedeAntwoorden = 0;
-let totaalVragen = 0;
-let huidigeNootPositie = null;
-let huidigeOefeningId = null;
-let isBezig = false;
+        this.goedeAntwoorden = 0;
+        this.totaalVragen = 0;
+        this.huidigeNootPositie = null;
+        this.huidigeOefeningId = null;
+        this.isBezig = false;
+    }
+
+    startNieuweVraag() {
+        this.isBezig = false;
+        this.huidigeNootPositie = this.notenPosities[Math.floor(Math.random() * this.notenPosities.length)];
+
+        const nootSvgElement = document.getElementById(this.svgElementId);
+
+        if (nootSvgElement) {
+            nootSvgElement.setAttribute("cy", this.huidigeNootPositie.y);
+        }
+    }
+
+    checkAntwoord(antwoord) {
+        if (this.isBezig) return;
+
+        const feedbackEl = document.getElementById(this.feedbackElementId);
+        if (!feedbackEl) return;
+
+        this.isBezig = true;
+        feedbackEl.textContent = "Controleren..."; 
+        feedbackEl.style.color = "orange";
+        this.totaalVragen++;
+
+        setTimeout(() => {
+            const feedbackEl = document.getElementById(this.feedbackElementId);
+
+            if (antwoord === this.huidigeNootPositie.letter) {
+                this.goedeAntwoorden++;
+                feedbackEl.textContent = "Correct! Goed gedaan.";
+                feedbackEl.style.color = "green";
+            } else {
+                feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + this.huidigeNootPositie.letter;
+                feedbackEl.style.color = "red";
+            }
+
+            const tellerEl = document.getElementById(this.tellerElementId);
+            if (tellerEl) tellerEl.textContent = `Beantwoord: ${this.totaalVragen} | Goed: ${this.goedeAntwoorden}`;
+
+            setTimeout(() => {
+                feedbackEl.textContent = "Welke noot is dit?";
+                feedbackEl.style.color = "black";
+                this.startNieuweVraag();
+            }, 1000);
+        }, 150);
+    }
+
+    stopEnOpslaan() {
+        if (this.totaalVragen === 0) {
+            alert("Je hebt nog geen vragen beantwoord!");
+            return;
+        }
+
+        window.verstuurScoreNaarServer(this.goedeAntwoorden, this.totaalVragen, this.huidigeOefeningId);
+        this.goedeAntwoorden = 0;
+        this.totaalVragen = 0;
+        this.isBezig = false;
+    }
+
+    speelOefening(id, naam) {
+        this.huidigeOefeningId = id;
+        router.navigeer(`speel-${this.suffix}`, { oefeningId: id, oefeningNaam: naam });
+        setTimeout(() => {
+            this.startNieuweVraag();
+        }, 50);
+    }
+
+}
 
 
-const alleNootPosities = [
+
+const nootPositiesTreble = [
     { naam: "C (midden)", letter: "C", y: 110 },  // hulplijn onder
     { naam: "D",           letter: "D", y: 105 },  // onder onderste lijn
     { naam: "E",           letter: "E", y: 100 },  // op onderste lijn
@@ -92,77 +169,68 @@ const alleNootPosities = [
     { naam: "G (hoger)",   letter: "G", y: 55 },   // hulplijn boven
 ];
 
+const nootPositiesBass = [
+    { naam: "E (laag)",    letter: "E", y: 110 },  // hulplijn onder
+    { naam: "F",           letter: "F", y: 105 },  // onder onderste lijn
+    { naam: "G",           letter: "G", y: 100 },  // op onderste lijn
+    { naam: "A",           letter: "A", y: 95 },   // tussen 1e en 2e lijn
+    { naam: "B",           letter: "B", y: 90 },   // op 2e lijn
+    { naam: "C (midden)",  letter: "C", y: 85 },   // tussen 2e en 3e lijn
+    { naam: "D",           letter: "D", y: 80 },   // op 3e lijn
+    { naam: "E",           letter: "E", y: 75 },   // tussen 3e en 4e lijn
+    { naam: "F",           letter: "F", y: 70 },   // op 4e lijn
+    { naam: "G",           letter: "G", y: 65 },   // tussen 4e en 5e lijn
+    { naam: "A",           letter: "A", y: 60 },   // op 5e lijn
+    { naam: "B (hoog)",    letter: "B", y: 55 },   // hulplijn boven
+]
 
-window.startNieuweVraag = function() {
-    isBezig = false;
-    huidigeNootPositie = alleNootPosities[Math.floor(Math.random() * alleNootPosities.length)];
+const trebleOefening = new MuziekOefening({
+    naam : "Treble Clef Oefening",
+    suffix : "treble",
+    notenPosities : nootPositiesTreble,
+    svgElementId : "treble-note",
+    feedbackElementId : "treble-feedback",
+    tellerElementId : "treble-teller"
+});
 
-    const nootSvgElement = document.getElementById("noot-bolletje-svg");
+const bassOefening = new MuziekOefening({
+    naam : "Bass Clef Oefening",
+    suffix : "bass",
+    notenPosities : nootPositiesBass,
+    svgElementId : "bass-note",
+    feedbackElementId : "bass-feedback",
+    tellerElementId : "bass-teller"
+});
 
-    if (nootSvgElement) {
-        nootSvgElement.setAttribute("cy", huidigeNootPositie.y);
-    }
 
-}
+let actieveOefening = null;
 
 window.checkAntwoord = function(antwoord) {
-    if (isBezig) return;
-
-
-    const feedbackEl = document.getElementById("feedback-bericht");
-    if (!feedbackEl) return;
-
-    isBezig = true;
-
-    feedbackEl.textContent = "Controleren..."; 
-    feedbackEl.style.color = "orange";
-    totaalVragen++;
-    
-    setTimeout(() => {
-        const feedbackEl = document.getElementById("feedback-bericht");
-
-        const isCorrect = (antwoord === huidigeNootPositie.naam.charAt(0));
-
-        if (antwoord === huidigeNootPositie.letter.charAt(0)) {
-            goedeAntwoorden++;
-            feedbackEl.textContent = "Correct! Goed gedaan.";
-            feedbackEl.style.color = "green";
-        } else {
-            feedbackEl.textContent = "Helaas! Het juiste antwoord was: " + huidigeNootPositie.letter;
-            feedbackEl.style.color = "red";
-        }
-
-        const tellerEl = document.getElementById("vraag-teller");
-        if (tellerEl) tellerEl.textContent = `Beantwoord: ${totaalVragen}`;
-
-        setTimeout(() => {
-            feedbackEl.textContent = "Welke noot is dit?";
-            feedbackEl.style.color = "black";
-            startNieuweVraag();
-        }, 1000);
-    }, 150);
+    if (actieveOefening) {
+        actieveOefening.checkAntwoord(antwoord);
+    }
 }
 
 window.stopEnOpslaan = function() {
-    if (totaalVragen === 0) {
-        alert("Je hebt nog geen vragen beantwoord!");
-        return;
+    if (actieveOefening) {
+        actieveOefening.stopEnOpslaan();
     }
-
-    const eindScore = Math.round((goedeAntwoorden / totaalVragen) * 100);
-    window.verstuurScoreNaarServer(eindScore, huidigeOefeningId);
-    goedeAntwoorden = 0;
-    totaalVragen = 0;
-    isBezig = false;
 }
 
-window.speelOefening = function(id, naam) {
-    huidigeOefeningId = id;
-    router.navigeer('speel-treble', { oefeningId: id, oefeningNaam: naam });
-    setTimeout(() => {
-        startNieuweVraag();
-    }, 50);
-};
+window.speelOefening = function(id, naam, oefeningType) {
+    if (oefeningType.toLowerCase().includes('treble')) {
+        actieveOefening = trebleOefening;
+    } else if (oefeningType.toLowerCase().includes('bass')) {
+        actieveOefening = bassOefening;
+    } else {
+        console.error("Onbekend oefeningtype:", oefeningType);
+        return;
+    }
+    
+    if (actieveOefening) {
+        actieveOefening.speelOefening(id, naam);
+    }
+}
 
 
 
