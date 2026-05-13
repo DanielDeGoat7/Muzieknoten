@@ -119,3 +119,71 @@
     </button>
     </div>
 </script>
+
+<script id="beide-clef-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h2>{{oefeningNaam}}</h2>
+        
+    <div class="oefening-scherm">
+
+
+    // Treble
+    <div>
+    <svg viewBox="0 0 200 160" class="notenbalk-svg">
+
+    <text x="25" y="82" font-size="55" font-family="serif" text-anchor="middle" dominant-baseline="central">𝄞</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+    <ellipse id="treble-note" cx="100" cy="80" rx="8" ry="6" fill="black" class="noot-svg" />
+    </svg>
+    </div>
+
+    // Bass
+    <div style ="margin-top: 40px;">
+    <svg viewBox="0 0 200 160" class="notenbalk-svg">
+
+    <text x="30" y="95" font-size="45" font-family="serif" text-anchor="middle">𝄢</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+    <ellipse id="bass-note" cx="100" cy="100" rx="8" ry="6" fill="black" class="noot-svg" />
+    </svg>
+    </div>
+
+    
+
+    <div id="beide-feedback" class="feedback-text">
+    Klik op de juiste noot...
+    </div>
+
+    <div id="beide-teller" class="teller-text">
+    Beantwoord: 0 | Goed: 0
+    </div>
+
+    <div class="btn-group-mobile">
+    <button class="btn-noot-guess" onclick="checkAntwoord('A')">A</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('B')">B</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('C')">C</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('D')">D</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('E')">E</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('F')">F</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('G')">G</button>
+    </div>
+    </div>
+
+    <hr>
+        
+    <button class="btn-stop-opslaan" onclick="stopEnOpslaan()">
+    Stoppen & Score Opslaan
+    </button>
+    </div>
+</script>

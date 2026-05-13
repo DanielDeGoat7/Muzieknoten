@@ -21,6 +21,7 @@
         }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
+        else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
 
 
@@ -183,6 +184,8 @@ const nootPositiesBass = [
     { naam: "A",           letter: "A", y: 60 },   // op 5e lijn
     { naam: "B (hoog)",    letter: "B", y: 55 },   // hulplijn boven
 ]
+
+
 
 const trebleOefening = new MuziekOefening({
     naam : "Treble Clef Oefening",
