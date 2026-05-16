@@ -117,16 +117,7 @@ window.maakKlasAan = async function() {
 }
 
 window.laadKlassen = async function() {
-    try {
-        const response = await fetch('/api/Klas');
-        const klassen = await response.json();
-
-        const template = Handlebars.compile(document.getElementById('klas-template').innerHTML);
-        const container = document.getElementById('app-container');
-        container.innerHTML = template({ klassen: klassen });
-    } catch (error) {
-        console.error("Fout bij laden klassen:", error);
-    }
+    router.navigeer('klas');
 }
 
 window.bekijkKlas = function(id) {
