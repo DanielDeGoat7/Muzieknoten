@@ -183,3 +183,48 @@
     </button>
     </div>
 </script>
+
+<script id="klas-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h1>Klassen</h1>
+        
+    <div class="klas-container">
+    <button class="btn btn-primary" onclick="toonKlasAanmakenForm()">
+    + Nieuwe Klas Aanmaken
+    </button>
+
+    <div id="klas-aanmaken-form" style="display: none; margin-top: 20px;">
+    <div class="card">
+    <div class="card-body">
+    <h5 class="card-title">Nieuwe klas aanmaken</h5>
+    <input type="text" id="klas-naam" class="form-control" placeholder="Klas naam" />
+    <textarea id="klas-beschrijving" class="form-control mt-2" placeholder="Beschrijving (optioneel)"></textarea>
+    <button class="btn btn-success mt-2" onclick="maakKlasAan()">Aanmaken</button>
+    <button class="btn btn-secondary mt-2" onclick="annuleerKlasAanmaken()">Annuleren</button>
+    </div>
+    </div>
+    </div>
+
+    <div id="klassen-lijst" class="mt-4">
+    <h3>Bestaande klassen</h3>
+    {{#if klassen.length}}
+    <div class="row">
+    {{#each klassen}}
+    <div class="col-md-4 mb-3">
+    <div class="card">
+    <div class="card-body">
+    <h5 class="card-title">{{this.naam}}</h5>
+    <button class="btn btn-sm btn-info" onclick="bekijkKlas({{this.id}})">Bekijk</button>
+    <button class="btn btn-sm btn-danger" onclick="verwijderKlas({{this.id}})">Verwijder</button>
+    </div>
+    </div>
+    </div>
+    {{/each}}
+    </div>
+    {{else}}
+    <p>Geen klassen gevonden. Klik op "Nieuwe Klas Aanmaken" om te beginnen.</p>
+    {{/if}}
+    </div>
+    </div>
+    </div>
+</script>

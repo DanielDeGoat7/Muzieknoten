@@ -23,6 +23,15 @@
         else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
         else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
+        else if (scherm === 'klas') {
+            console.log("Navigeren naar klas");
+            fetch('/api/Klas/')
+                .then(response => response.json())
+                .then(data => {
+                    render("klas-template", { klassen: data })
+                });
+        }
+        else if (scherm === 'klas-details') render("klas-details-template", extraData);
 
 
         // Account gerelateerde schermen
@@ -67,6 +76,77 @@ function checkServerErrors() {
         alert("Fout bij registratie: " + message);
         
         showRegister(); 
+    }
+}
+
+window.toonKlasAanmakenForm = function() {
+    document.getElementById('klas-aanmaken-form').style.display = 'block';
+}
+
+window.annuleerKlasAanmaken = function() {
+    document.getElementById('klas-aanmaken-form').style.display = 'none';
+    document.getElementById('klas-naam').value = '';
+}
+
+window.maakKlasAan = async function() {
+    const naam = document.getElementById('klas-naam').value;
+
+    if (!naam) {
+        alert("Vul alstublieft een naam in voor de klas.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/Klas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ naam: naam })
+        });
+
+        if (response.ok) {
+            alert("Klas succesvol aangemaakt!");
+            annuleerKlasAanmaken();
+            laadKlassen();
+        } else {
+            alert("Fout bij aanmaken klas");
+        }
+    } catch (error) {
+        console.error("Fout", error);
+        alert("Netwerkfout bij aanmaken klas.");
+    }
+}
+
+window.laadKlassen = async function() {
+    try {
+        const response = await fetch('/api/Klas');
+        const klassen = await response.json();
+
+        const template = Handlebars.compile(document.getElementById('klas-template').innerHTML);
+        const container = document.getElementById('app-container');
+        container.innerHTML = template({ klassen: klassen });
+    } catch (error) {
+        console.error("Fout bij laden klassen:", error);
+    }
+}
+
+window.bekijkKlas = function(id) {
+    router.navigeer('klas-details', { klasId: id });
+}
+
+window.verwijderKlas = async function(id) {
+    if (confirm("Weet je zeker dat je deze klas wilt verwijderen?")) {
+        try {
+            const response = await fetch(`/api/Klas/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert("Klas succesvol verwijderd!");
+                laadKlassen();
+            } else {
+                alert("Fout bij verwijderen klas");
+            }
+        } catch (error) {
+            console.error("Fout bij verwijderen klas:", error);
+            alert("Netwerkfout bij verwijderen klas.");
+        }
     }
 }
 
