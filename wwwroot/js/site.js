@@ -21,6 +21,7 @@
         }
         else if (scherm === 'speel-treble') render("treble-clef-template", extraData);
         else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
+        else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
 
 
@@ -89,10 +90,24 @@ class MuziekOefening {
         this.isBezig = false;
         this.huidigeNootPositie = this.notenPosities[Math.floor(Math.random() * this.notenPosities.length)];
 
-        const nootSvgElement = document.getElementById(this.svgElementId);
+        const trebleNote = document.getElementById("treble-note");
+        const bassNote = document.getElementById("bass-note");
+    
+        if (trebleNote) trebleNote.style.opacity = "0";
+        if (bassNote) bassNote.style.opacity = "0";
 
-        if (nootSvgElement) {
+        if (this.huidigeNootPositie.balk === "treble") {
+            const nootSvgElement = document.getElementById("treble-note");
+            if (nootSvgElement) {
             nootSvgElement.setAttribute("cy", this.huidigeNootPositie.y);
+            nootSvgElement.style.opacity = "1";
+            }
+        } else {
+            const nootSvgElement = document.getElementById("bass-note");
+            if (nootSvgElement) {
+            nootSvgElement.setAttribute("cy", this.huidigeNootPositie.y);
+            nootSvgElement.style.opacity = "1";
+            }
         }
     }
 
@@ -155,34 +170,38 @@ class MuziekOefening {
 
 
 const nootPositiesTreble = [
-    { naam: "C (midden)", letter: "C", y: 110 },  // hulplijn onder
-    { naam: "D",           letter: "D", y: 105 },  // onder onderste lijn
-    { naam: "E",           letter: "E", y: 100 },  // op onderste lijn
-    { naam: "F",           letter: "F", y: 95 },   // tussen 1e en 2e lijn
-    { naam: "G",           letter: "G", y: 90 },   // op 2e lijn
-    { naam: "A",           letter: "A", y: 85 },   // tussen 2e en 3e lijn
-    { naam: "B",           letter: "B", y: 80 },   // op 3e lijn
-    { naam: "C (hoger)",   letter: "C", y: 75 },   // tussen 3e en 4e lijn
-    { naam: "D (hoger)",   letter: "D", y: 70 },   // op 4e lijn
-    { naam: "E (hoger)",   letter: "E", y: 65 },   // tussen 4e en 5e lijn
-    { naam: "F (hoger)",   letter: "F", y: 60 },   // op 5e lijn
-    { naam: "G (hoger)",   letter: "G", y: 55 },   // hulplijn boven
+    { naam: "C (midden)", letter: "C", y: 110, balk: "treble" },  // hulplijn onder
+    { naam: "D",           letter: "D", y: 105, balk: "treble" },  // onder onderste lijn
+    { naam: "E",           letter: "E", y: 100, balk: "treble" },  // op onderste lijn
+    { naam: "F",           letter: "F", y: 95, balk: "treble" },   // tussen 1e en 2e lijn
+    { naam: "G",           letter: "G", y: 90, balk: "treble" },   // op 2e lijn
+    { naam: "A",           letter: "A", y: 85, balk: "treble" },   // tussen 2e en 3e lijn
+    { naam: "B",           letter: "B", y: 80, balk: "treble" },   // op 3e lijn
+    { naam: "C (hoger)",   letter: "C", y: 75, balk: "treble" },   // tussen 3e en 4e lijn
+    { naam: "D (hoger)",   letter: "D", y: 70, balk: "treble" },   // op 4e lijn
+    { naam: "E (hoger)",   letter: "E", y: 65, balk: "treble" },   // tussen 4e en 5e lijn
+    { naam: "F (hoger)",   letter: "F", y: 60, balk: "treble" },   // op 5e lijn
+    { naam: "G (hoger)",   letter: "G", y: 55, balk: "treble" },   // hulplijn boven
 ];
 
 const nootPositiesBass = [
-    { naam: "E (laag)",    letter: "E", y: 110 },  // hulplijn onder
-    { naam: "F",           letter: "F", y: 105 },  // onder onderste lijn
-    { naam: "G",           letter: "G", y: 100 },  // op onderste lijn
-    { naam: "A",           letter: "A", y: 95 },   // tussen 1e en 2e lijn
-    { naam: "B",           letter: "B", y: 90 },   // op 2e lijn
-    { naam: "C (midden)",  letter: "C", y: 85 },   // tussen 2e en 3e lijn
-    { naam: "D",           letter: "D", y: 80 },   // op 3e lijn
-    { naam: "E",           letter: "E", y: 75 },   // tussen 3e en 4e lijn
-    { naam: "F",           letter: "F", y: 70 },   // op 4e lijn
-    { naam: "G",           letter: "G", y: 65 },   // tussen 4e en 5e lijn
-    { naam: "A",           letter: "A", y: 60 },   // op 5e lijn
-    { naam: "B (hoog)",    letter: "B", y: 55 },   // hulplijn boven
+    { naam: "E (laag)",    letter: "E", y: 110, balk: "bass" },  // hulplijn onder
+    { naam: "F",           letter: "F", y: 105, balk: "bass" },  // onder onderste lijn
+    { naam: "G",           letter: "G", y: 100, balk: "bass" },  // op onderste lijn
+    { naam: "A",           letter: "A", y: 95, balk: "bass" },   // tussen 1e en 2e lijn
+    { naam: "B",           letter: "B", y: 90, balk: "bass" },   // op 2e lijn
+    { naam: "C (midden)",  letter: "C", y: 85, balk: "bass" },   // tussen 2e en 3e lijn
+    { naam: "D",           letter: "D", y: 80, balk: "bass" },   // op 3e lijn
+    { naam: "E",           letter: "E", y: 75, balk: "bass" },   // tussen 3e en 4e lijn
+    { naam: "F",           letter: "F", y: 70, balk: "bass" },   // op 4e lijn
+    { naam: "G",           letter: "G", y: 65, balk: "bass" },   // tussen 4e en 5e lijn
+    { naam: "A",           letter: "A", y: 60, balk: "bass" },   // op 5e lijn
+    { naam: "B (hoog)",    letter: "B", y: 55, balk: "bass" },   // hulplijn boven
 ]
+
+const nootPositiesBeide = [...nootPositiesTreble, ...nootPositiesBass];
+
+
 
 const trebleOefening = new MuziekOefening({
     naam : "Treble Clef Oefening",
@@ -200,6 +219,15 @@ const bassOefening = new MuziekOefening({
     svgElementId : "bass-note",
     feedbackElementId : "bass-feedback",
     tellerElementId : "bass-teller"
+});
+
+const beideOefening = new MuziekOefening({
+    naam : "Beide Clefs Oefening",
+    suffix : "beide",
+    notenPosities : nootPositiesBeide,
+    svgElementId : "beide-note",
+    feedbackElementId : "beide-feedback",
+    tellerElementId : "beide-teller"
 });
 
 
@@ -222,6 +250,8 @@ window.speelOefening = function(id, naam, oefeningType) {
         actieveOefening = trebleOefening;
     } else if (oefeningType.toLowerCase().includes('bass')) {
         actieveOefening = bassOefening;
+    } else if (oefeningType.toLowerCase().includes('beide')) {
+        actieveOefening = beideOefening;
     } else {
         console.error("Onbekend oefeningtype:", oefeningType);
         return;
