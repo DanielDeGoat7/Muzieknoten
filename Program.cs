@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Piano.Data;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.MaxDepth = 64;
+    });
 
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
