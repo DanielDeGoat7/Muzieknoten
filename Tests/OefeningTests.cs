@@ -7,7 +7,9 @@ public class MuzieknotenTests
 {
     private const string BaseUrl = "https://localhost:7059";
 
-    // Maak een account aan met email: hallo@a.nl en wachtwoord 123456 voordat je deze tests uitvoert
+    // Maak een account aan met deze gegevens voordat je de tests draait
+    private const string TestEmail = "hallo@a.nl";
+    private const string TestPassword = "123456";
 
     [TestMethod]
     public async Task TrebleOefeningAntwoordCheck()
@@ -23,8 +25,8 @@ public class MuzieknotenTests
 
         await page.ClickAsync("button:has-text('Inloggen')");
 
-        await page.FillAsync("input[type='email']", "hallo@a.nl");
-        await page.FillAsync("input[type='password']", "123456");
+        await page.FillAsync("input[type='email']", TestEmail);
+        await page.FillAsync("input[type='password']", TestPassword);
         await page.ClickAsync("button:has-text('Inloggen')");
         await page.WaitForURLAsync($"{BaseUrl}/Home/Index");
 
@@ -65,8 +67,8 @@ public class MuzieknotenTests
 
         await page.ClickAsync("button:has-text('Inloggen')");
 
-        await page.FillAsync("input[type='email']", "hallo@a.nl");
-        await page.FillAsync("input[type='password']", "123456");
+        await page.FillAsync("input[type='email']", TestEmail);
+        await page.FillAsync("input[type='password']", TestPassword);
         await page.ClickAsync("button:has-text('Inloggen')");
         await page.WaitForURLAsync($"{BaseUrl}/Home/Index");
 
