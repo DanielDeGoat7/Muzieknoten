@@ -144,6 +144,14 @@ namespace Piano.Controllers
             if (leerlingUser == null)
                 return NotFound("Leerling met dit e-mailadres niet gevonden");
 
+            var isDocent = await _userManager.IsInRoleAsync(leerlingUser, "Docent");
+            if (isDocent)
+                return BadRequest("De opgegeven gebruiker is een docent, geen leerling");
+
+            var isLeerling = await _userManager.IsInRoleAsync(leerlingUser, "Leerling");
+            if (!isLeerling)
+                return BadRequest("De opgegeven gebruiker heeft geen leerling rol");
+
             var bestaandeLeerling = await _context.Leerlingen.FirstOrDefaultAsync(l => l.IdentityUserId == leerlingUser.Id);
 
             Leerling leerling;
