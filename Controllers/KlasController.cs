@@ -180,6 +180,9 @@ namespace Piano.Controllers
             if (currentUser == null)
                 return Unauthorized();
 
+            var docent = await _context.Docenten.FirstOrDefaultAsync(d => d.IdentityUserId == currentUser.Id);
+            if (docent == null) return NotFound("Docent niet gevonden");
+
             var klas = await _context.Klassen.FindAsync(klasId);
             if (klas == null)
                 return NotFound();
@@ -191,7 +194,8 @@ namespace Piano.Controllers
             if (leerling == null || leerling.KlasId != klasId)
                 return NotFound();
 
-            _context.Leerlingen.Remove(leerling);
+            leerling.KlasId = null;
+
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Leerling uit klas verwijderd" });
