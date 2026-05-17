@@ -144,13 +144,16 @@ namespace Piano.Controllers
             if (leerlingUser == null)
                 return NotFound("Leerling met dit e-mailadres niet gevonden");
 
-            var bestaandeLeerling = await _context.Leerlingen.FirstOrDefaultAsync(l => l.IdentityUserId == leerlingUser.Id && l.KlasId == id);
+            var bestaandeLeerling = await _context.Leerlingen.FirstOrDefaultAsync(l => l.IdentityUserId == leerlingUser.Id);
 
             Leerling leerling;
             if (bestaandeLeerling != null)
             {
                 bestaandeLeerling.KlasId = id;
                 leerling = bestaandeLeerling;
+
+                if (bestaandeLeerling.Niveau == null)
+                    bestaandeLeerling.Niveau = dto.Niveau ?? Niveau.Beginner;
             }
             else
             {

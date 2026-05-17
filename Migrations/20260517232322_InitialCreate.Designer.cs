@@ -11,7 +11,7 @@ using Piano.Data;
 namespace Piano.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260517231024_InitialCreate")]
+    [Migration("20260517232322_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
