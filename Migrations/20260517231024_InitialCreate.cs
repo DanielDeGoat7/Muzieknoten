@@ -184,12 +184,12 @@ namespace Piano.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Docenten", x => x.Id);
+                    table.UniqueConstraint("AK_Docenten_IdentityUserId", x => x.IdentityUserId);
                     table.ForeignKey(
                         name: "FK_Docenten_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -229,17 +229,17 @@ namespace Piano.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Naam = table.Column<string>(type: "TEXT", nullable: false),
-                    DocentIdentityUserId = table.Column<string>(type: "TEXT", nullable: false),
-                    DocentId = table.Column<int>(type: "INTEGER", nullable: true)
+                    DocentIdentityUserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Klassen", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Klassen_Docenten_DocentId",
-                        column: x => x.DocentId,
+                        name: "FK_Klassen_Docenten_DocentIdentityUserId",
+                        column: x => x.DocentIdentityUserId,
                         principalTable: "Docenten",
-                        principalColumn: "Id");
+                        principalColumn: "IdentityUserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -317,14 +317,9 @@ namespace Piano.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Docenten_IdentityUserId",
-                table: "Docenten",
-                column: "IdentityUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Klassen_DocentId",
+                name: "IX_Klassen_DocentIdentityUserId",
                 table: "Klassen",
-                column: "DocentId");
+                column: "DocentIdentityUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Leerlingen_IdentityUserId",

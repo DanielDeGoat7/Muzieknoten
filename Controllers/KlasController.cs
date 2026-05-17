@@ -43,10 +43,14 @@ namespace Piano.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Klas>> GetById(int id)
+        public async Task<ActionResult<KlasDetailsDto>> GetById(int id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
+
+            var docent = await _context.Docenten.FirstOrDefaultAsync(d => d.IdentityUserId == currentUser.Id);
+
+            if (docent == null) return NotFound("Docent niet gevonden");
 
             var klas = await _context.Klassen
                 .Include(k => k.Docent)
@@ -55,10 +59,23 @@ namespace Piano.Controllers
 
             if (klas == null) return NotFound();
 
-            if (klas.DocentIdentityUserId != currentUser.Id)
+            if (klas.DocentIdentityUserId != docent.IdentityUserId)
                 return Forbid();
 
-            return Ok(klas);
+            var result = new KlasDetailsDto
+            {
+                Id = klas.Id,
+                Naam = klas.Naam,
+                DocentNaam = klas.Docent?.Naam ?? "Onbekend",
+                Leerlingen = klas.Leerlingen.Select(l => new LeerlingDto
+                {
+                    Id = l.Id,
+                    Naam = l.Naam,
+                    Niveau = l.Niveau.ToString() ?? "Beginner"
+                }).ToList()
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
@@ -111,6 +128,11 @@ namespace Piano.Controllers
             if (currentUser == null)
                 return Unauthorized();
 
+            var docent = await _context.Docenten.FirstOrDefaultAsync(d => d.IdentityUserId == currentUser.Id);
+
+            if (docent == null)
+                return NotFound("Docent niet gevonden");
+
             var klas = await _context.Klassen.FindAsync(id);
             if (klas == null)
                 return NotFound();
@@ -118,15 +140,31 @@ namespace Piano.Controllers
             if (klas.DocentIdentityUserId != currentUser.Id)
                 return Forbid();
 
-            var leerling = new Leerling
-            {
-                Naam = dto.Naam,
-                Niveau = dto.Niveau,
-                KlasId = id,
-                IdentityUserId = dto.IdentityUserId
-            };
+            var leerlingUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (leerlingUser == null)
+                return NotFound("Leerling met dit e-mailadres niet gevonden");
 
-            _context.Leerlingen.Add(leerling);
+            var bestaandeLeerling = await _context.Leerlingen.FirstOrDefaultAsync(l => l.IdentityUserId == leerlingUser.Id && l.KlasId == id);
+
+            Leerling leerling;
+            if (bestaandeLeerling != null)
+            {
+                bestaandeLeerling.KlasId = id;
+                leerling = bestaandeLeerling;
+            }
+            else
+            {
+                leerling = new Leerling
+                {
+                    Naam = dto.Naam ?? leerlingUser.UserName ?? dto.Email,
+                    Niveau = dto.Niveau ?? Niveau.Beginner,
+                    IdentityUserId = leerlingUser.Id,
+                    KlasId = id
+                };
+                _context.Leerlingen.Add(leerling);
+            }
+
+
             await _context.SaveChangesAsync();
 
             return Ok(leerling);
@@ -191,6 +229,21 @@ namespace Piano.Controllers
     {
         public string Naam { get; set; } = string.Empty;
         public Niveau? Niveau { get; set; }
-        public string IdentityUserId { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class KlasDetailsDto
+    {
+        public int Id { get; set; }
+        public string Naam { get; set; } = string.Empty;
+        public string DocentNaam { get; set; } = string.Empty;
+        public List<LeerlingDto> Leerlingen { get; set; } = new List<LeerlingDto>();
+    }
+
+    public class LeerlingDto
+    {
+        public int Id { get; set; }
+        public string Naam { get; set; } = string.Empty;
+        public string Niveau { get; set; } = string.Empty;
     }
 }

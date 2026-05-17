@@ -11,7 +11,7 @@ using Piano.Data;
 namespace Piano.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260516233327_InitialCreate")]
+    [Migration("20260517231024_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -232,8 +232,6 @@ namespace Piano.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdentityUserId");
-
                     b.ToTable("Docenten");
                 });
 
@@ -241,9 +239,6 @@ namespace Piano.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("DocentId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DocentIdentityUserId")
@@ -256,7 +251,7 @@ namespace Piano.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocentId");
+                    b.HasIndex("DocentIdentityUserId");
 
                     b.ToTable("Klassen");
                 });
@@ -417,9 +412,7 @@ namespace Piano.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdentityUserId");
 
                     b.Navigation("IdentityUser");
                 });
@@ -428,7 +421,10 @@ namespace Piano.Migrations
                 {
                     b.HasOne("Piano.Models.Docent", "Docent")
                         .WithMany("Klassen")
-                        .HasForeignKey("DocentId");
+                        .HasForeignKey("DocentIdentityUserId")
+                        .HasPrincipalKey("IdentityUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Docent");
                 });

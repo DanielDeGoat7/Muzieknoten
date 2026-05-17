@@ -227,3 +227,65 @@
     </div>
     </div>
 </script>
+
+<script id="klas-details-template" type="text/x-handlebars-template">
+    <div class="view">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>{{klas.naam}}</h1>
+            <button class="btn btn-secondary" onclick="router.navigeer('klas')">← Terug</button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Klas informatie</h5>
+                <p><strong>Docent:</strong> {{klas.docentNaam}}</p>
+                <p><strong>Aantal leerlingen:</strong> {{klas.leerlingen.length}}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Leerlingen</h5>
+                    <button class="btn btn-primary btn-sm" onclick="toonLeerlingToevoegenForm({{klas.id}})">
+                        + Leerling toevoegen
+                    </button>
+                </div>
+                
+                {{#if klas.leerlingen.length}}
+                    <div class="list-group">
+                        {{#each klas.leerlingen}}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{this.naam}}</strong>
+                                        <span class="badge bg-secondary ms-2">{{this.niveau}}</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-danger" 
+                                            onclick="verwijderLeerling({{../klas.id}}, {{this.id}})">
+                                        Verwijder
+                                    </button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <p class="text-muted">Nog geen leerlingen in deze klas.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    <div id="leerling-toevoegen-form" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); width: 90%; max-width: 400px;">
+        <h3 class="mb-3">Leerling toevoegen</h3>
+        <div class="mb-3">
+            <label class="form-label">Emailadres *</label>
+            <input type="email" id="leerling-email" class="form-control" placeholder="leerling@school.nl">
+            <small class="text-muted">De leerling moet al geregistreerd zijn</small>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" onclick="voegLeerlingToe()">Toevoegen</button>
+            <button class="btn btn-secondary" onclick="annuleerLeerlingToevoegen()">Annuleren</button>
+        </div>
+    </div>
+</script>

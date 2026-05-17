@@ -31,7 +31,12 @@
                     render("klas-template", { klassen: data })
                 });
         }
-        else if (scherm === 'klas-details') render("klas-details-template", extraData);
+        else if (scherm === 'klas-details') 
+            fetch(`/api/Klas/${extraData.klasId}`)
+                .then(response => response.json())  
+                .then(data => {
+                    render("klas-details-template", { klas: data })
+                }); 
 
 
         // Account gerelateerde schermen
@@ -137,6 +142,79 @@ window.verwijderKlas = async function(id) {
         } catch (error) {
             console.error("Fout bij verwijderen klas:", error);
             alert("Netwerkfout bij verwijderen klas.");
+        }
+    }
+}
+
+window.toonLeerlingToevoegenForm = function(klasId) {
+    const form = document.getElementById('leerling-toevoegen-form');
+    if (form) {
+        form.style.display = 'block';
+        form.dataset.klasId = klasId;
+        document.getElementById('leerling-email').value = '';
+    }
+}
+
+window.annuleerLeerlingToevoegen = function() {
+    const form = document.getElementById('leerling-toevoegen-form');
+    if (form) {
+        form.style.display = 'none';
+        document.getElementById('leerling-email').value = '';
+    }
+}
+
+window.voegLeerlingToe = async function() {
+    const form = document.getElementById('leerling-toevoegen-form');
+    const klasId = form?.dataset.klasId;
+    const email = document.getElementById('leerling-email').value;
+
+    if (!email) {
+        alert("Vul alstublieft een e-mailadres in voor de leerling.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/Klas/${klasId}/leerling`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: email,
+                naam: email,
+                niveau: 1
+            })
+        });
+
+        if (response.ok) {
+            alert("Leerling succesvol toegevoegd!");
+            annuleerLeerlingToevoegen();
+            router.navigeer('klas-details', { klasId: klasId });
+        } else {
+            const error = await response.text();
+            console.error("Fout bij toevoegen leerling:", error);
+            alert("Fout bij toevoegen leerling: " + error);
+        }
+    } catch (error) {
+        console.error("Netwerkfout bij toevoegen leerling:", error);
+        alert("Netwerkfout bij toevoegen leerling.");
+    }
+}
+
+window.verwijderLeerling = async function(klasId, leerlingId) {
+    if (confirm("Weet je zeker dat je deze leerling wilt verwijderen?")) {
+        try {
+            const response = await fetch(`/api/Klas/${klasId}/leerling/${leerlingId}`, { 
+                method: 'DELETE' 
+            });
+
+            if (response.ok) {
+                alert("Leerling succesvol verwijderd!");
+                router.navigeer('klas-details', { klasId: klasId });
+            } else {
+                alert("Fout bij verwijderen leerling");
+            }
+        } catch (error) {
+            console.error("Fout bij verwijderen leerling:", error);
+            alert("Netwerkfout bij verwijderen leerling.");
         }
     }
 }
