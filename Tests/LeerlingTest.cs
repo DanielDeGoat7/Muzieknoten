@@ -143,7 +143,7 @@ public class LeerlingToevoegenAanKlasTest
         // Assert
         var badRequestResult = result as BadRequestObjectResult;
         Assert.IsNotNull(badRequestResult);
-        Assert.IsTrue(badRequestResult.Value?.ToString()?.Contains("al in een klas"));
+        Assert.IsTrue(badRequestResult.Value?.ToString()?.Contains("zit al in"));
     }
 
     [TestCleanup]
