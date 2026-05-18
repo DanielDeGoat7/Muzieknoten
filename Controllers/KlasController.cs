@@ -229,12 +229,20 @@ namespace Piano.Controllers
             if (currentUser == null)
                 return Unauthorized();
 
-            var klas = await _context.Klassen.FindAsync(id);
+            var klas = await _context.Klassen
+                .Include(k => k.Leerlingen)
+                .FirstOrDefaultAsync(k => k.Id == id);
+
             if (klas == null)
                 return NotFound();
 
             if (klas.DocentIdentityUserId != currentUser.Id)
                 return Forbid();
+
+            foreach (var leerling in klas.Leerlingen)
+            {
+                leerling.KlasId = null;
+            }
 
             _context.Klassen.Remove(klas);
             await _context.SaveChangesAsync();
