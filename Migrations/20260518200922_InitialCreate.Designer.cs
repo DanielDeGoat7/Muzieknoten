@@ -11,8 +11,8 @@ using Piano.Data;
 namespace Piano.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260509002755_UpdateOefeningNamen")]
-    partial class UpdateOefeningNamen
+    [Migration("20260518200922_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,20 +233,6 @@ namespace Piano.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Docenten");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IdentityUserId = "",
-                            Naam = "Daniël Dedden"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IdentityUserId = "",
-                            Naam = "Jan de Boer"
-                        });
                 });
 
             modelBuilder.Entity("Piano.Models.Klas", b =>
@@ -255,8 +241,9 @@ namespace Piano.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DocentId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("DocentIdentityUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -264,23 +251,9 @@ namespace Piano.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocentId");
+                    b.HasIndex("DocentIdentityUserId");
 
                     b.ToTable("Klassen");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DocentId = 1,
-                            Naam = "PianoX1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DocentId = 2,
-                            Naam = "PianoX2"
-                        });
                 });
 
             modelBuilder.Entity("Piano.Models.Leerling", b =>
@@ -305,35 +278,11 @@ namespace Piano.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdentityUserId");
+
                     b.HasIndex("KlasId");
 
                     b.ToTable("Leerlingen");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IdentityUserId = "",
-                            KlasId = 1,
-                            Naam = "Anna Jansen",
-                            Niveau = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IdentityUserId = "",
-                            KlasId = 1,
-                            Naam = "Bram de Vries",
-                            Niveau = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IdentityUserId = "",
-                            KlasId = 2,
-                            Naam = "Sofia Bakker",
-                            Niveau = 3
-                        });
                 });
 
             modelBuilder.Entity("Piano.Models.Oefening", b =>
@@ -378,6 +327,12 @@ namespace Piano.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AantalVragen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GoedeAntwoorden")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("OefeningId")
@@ -453,11 +408,21 @@ namespace Piano.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Piano.Models.Docent", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                        .WithMany()
+                        .HasForeignKey("IdentityUserId");
+
+                    b.Navigation("IdentityUser");
+                });
+
             modelBuilder.Entity("Piano.Models.Klas", b =>
                 {
                     b.HasOne("Piano.Models.Docent", "Docent")
-                        .WithMany()
-                        .HasForeignKey("DocentId")
+                        .WithMany("Klassen")
+                        .HasForeignKey("DocentIdentityUserId")
+                        .HasPrincipalKey("IdentityUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -466,9 +431,19 @@ namespace Piano.Migrations
 
             modelBuilder.Entity("Piano.Models.Leerling", b =>
                 {
-                    b.HasOne("Piano.Models.Klas", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                        .WithMany()
+                        .HasForeignKey("IdentityUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Piano.Models.Klas", "Klas")
                         .WithMany("Leerlingen")
                         .HasForeignKey("KlasId");
+
+                    b.Navigation("IdentityUser");
+
+                    b.Navigation("Klas");
                 });
 
             modelBuilder.Entity("Piano.Models.Resultaat", b =>
@@ -488,6 +463,11 @@ namespace Piano.Migrations
                     b.Navigation("Oefening");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Piano.Models.Docent", b =>
+                {
+                    b.Navigation("Klassen");
                 });
 
             modelBuilder.Entity("Piano.Models.Klas", b =>

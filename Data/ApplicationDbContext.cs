@@ -19,10 +19,19 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Docent>(entity =>
+        {
+            entity.HasOne(d => d.IdentityUser)
+                .WithMany()
+                .HasForeignKey(d => d.IdentityUserId)
+                .IsRequired(false);
+        });
+
         modelBuilder.Entity<Klas>()
             .HasOne(k => k.Docent)
-            .WithMany()
-            .HasForeignKey(k => k.DocentId);
+            .WithMany(d => d.Klassen)
+            .HasForeignKey(k => k.DocentIdentityUserId)
+            .HasPrincipalKey(d => d.IdentityUserId);
 
         modelBuilder.Entity<Resultaat>()
             .HasOne(r => r.User)
@@ -34,21 +43,15 @@ public class ApplicationDbContext : IdentityDbContext
             .WithMany()
             .HasForeignKey(r => r.OefeningId);
 
-        modelBuilder.Entity<Leerling>().HasData(
-            new Leerling { Id = 1, Naam = "Anna Jansen", Niveau = Niveau.Beginner, KlasId = 1 },
-            new Leerling { Id = 2, Naam = "Bram de Vries", Niveau = Niveau.Gevorderd, KlasId = 1 },
-            new Leerling { Id = 3, Naam = "Sofia Bakker", Niveau = Niveau.Expert, KlasId = 2 }
-        );
+        modelBuilder.Entity<Leerling>()
+            .HasOne(l => l.Klas)
+            .WithMany(k => k.Leerlingen)
+            .HasForeignKey(l => l.KlasId);
 
-        modelBuilder.Entity<Docent>().HasData(
-            new Docent { Id = 1, Naam = "Daniël Dedden" },
-            new Docent { Id = 2, Naam = "Jan de Boer" }
-        );
-
-        modelBuilder.Entity<Klas>().HasData(
-            new Klas { Id = 1, Naam = "PianoX1", DocentId = 1 },
-            new Klas { Id = 2, Naam = "PianoX2", DocentId = 2 }
-        );
+        modelBuilder.Entity<Leerling>()
+            .HasOne(l => l.IdentityUser)
+            .WithMany()
+            .HasForeignKey(l => l.IdentityUserId);
 
         modelBuilder.Entity<Oefening>().HasData(
             new Oefening { Id = 1, Naam = "Treble Clef", Niveau = Niveau.Beginner },
