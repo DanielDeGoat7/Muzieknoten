@@ -155,7 +155,7 @@ namespace Piano.Controllers
             var bestaandeLeerling = await _context.Leerlingen.FirstOrDefaultAsync(l => l.IdentityUserId == leerlingUser.Id);
 
             if (bestaandeLeerling != null && bestaandeLeerling.KlasId == id)
-                return BadRequest("Deze leerling zit al in deze klas");
+                return BadRequest("Deze leerling zit al in een klas");
 
             Leerling leerling;
             if (bestaandeLeerling != null)
