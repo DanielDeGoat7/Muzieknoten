@@ -23,7 +23,7 @@ namespace Piano.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("mijnresultaten")]
         public async Task<ActionResult<List<ResultaatDto>>> GetMijnResultaten()
         {
             var currentUser = await _userManager.GetUserAsync(User);

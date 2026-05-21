@@ -24,7 +24,6 @@
         else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
         else if (scherm === 'klas') {
-            console.log("Navigeren naar klas");
             fetch('/api/Klas/')
                 .then(response => response.json())
                 .then(data => {
@@ -37,6 +36,13 @@
                 .then(data => {
                     render("klas-details-template", { klas: data })
                 }); 
+        else if (scherm === 'leerling-dashboard') {
+            fetch('/api/Resultaat/mijnresultaten')
+                .then(response => response.json())
+                .then(data => {
+                    render("leerling-dashboard-template", { resultaten: data })
+                });
+        }
 
 
         // Account gerelateerde schermen
@@ -45,6 +51,18 @@
         else if (scherm === 'register') render("register-template");
     }
 };
+
+Handlebars.registerHelper('formatDate', function(dateString) {
+    if (!dateString) return 'Onbekend';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+});
 
 window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');

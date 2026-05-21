@@ -45,7 +45,8 @@
                         else if (User.Identity?.IsAuthenticated == true && User.IsInRole("Leerling"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="#" onclick="router.navigeer('dashboard')">Dashboard</a>
+                                <a class="nav-link text-dark" href="#"
+                                   onclick="router.navigeer('leerling-dashboard')">Dashboard</a>
                             </li>
                         }
                     </ul>

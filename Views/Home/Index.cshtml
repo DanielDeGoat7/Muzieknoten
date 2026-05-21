@@ -289,3 +289,40 @@
         </div>
     </div>
 </script>
+
+<script id="leerling-dashboard-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+        <h1>Mijn Voortgang</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resultaten</h5>
+                
+                {{#if resultaten.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Oefening</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each resultaten}}
+                                <tr>
+                                    <td>{{formatDate this.datum}}</td>
+                                    <td>{{this.oefeningNaam}}</td>
+                                    <td>{{this.weergaveScore}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Nog geen resultaten. Maak eerst een oefening!</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
