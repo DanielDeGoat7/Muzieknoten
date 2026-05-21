@@ -59,15 +59,20 @@ window.verstuurScoreNaarServer = async function(goedeAntwoorden, aantalVragen, o
     const url = `/api/Oefening?goedeAntwoorden=${goedeAntwoorden}&aantalVragen=${aantalVragen}&oefeningId=${oefeningId}`;
 
     try {
-        const reponse = await fetch(url, {
+        const response = await fetch(url, {
              method: 'POST' 
         });
 
-        if (reponse.ok) {
-            alert("Score succesvol opgeslagen!");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.isGast) {
+                alert("Je speelt als gast. Je score is niet opgeslagen. ");
+            } else {
+                alert("Je score is opgeslagen! ");
+            }
             router.navigeer('oefeningen');
         } else {
-            const errorData = await reponse.text();
+            const errorData = await response.text();
             console.error("Fout bij opslaan score:", errorData);
             alert("Fout bij opslaan score. ");
         }
@@ -86,6 +91,15 @@ function checkServerErrors() {
         alert("Fout bij registratie: " + message);
         
         showRegister(); 
+    }
+}
+
+window.doorgaanAlsGast = function() {
+    sessionStorage.setItem('isGast', 'true');
+    if (document.getElementById('app-container')) {
+        router.navigeer('home');
+    } else {
+        window.location.href = '/Home/Index';
     }
 }
 
