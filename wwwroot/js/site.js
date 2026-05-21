@@ -23,26 +23,9 @@
         else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
         else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
-        else if (scherm === 'klas') {
-            fetch('/api/Klas/')
-                .then(response => response.json())
-                .then(data => {
-                    render("klas-template", { klassen: data })
-                });
-        }
-        else if (scherm === 'klas-details') 
-            fetch(`/api/Klas/${extraData.klasId}`)
-                .then(response => response.json())  
-                .then(data => {
-                    render("klas-details-template", { klas: data })
-                }); 
-        else if (scherm === 'leerling-dashboard') {
-            fetch('/api/Resultaat/mijnresultaten')
-                .then(response => response.json())
-                .then(data => {
-                    render("leerling-dashboard-template", { resultaten: data })
-                });
-        }
+        else if (scherm === 'klas') { laadKlassen(); }
+        else if (scherm === 'klas-details') { bekijkKlasDetails(extraData.klasId); }
+        else if (scherm === 'leerling-dashboard') { laadLeerlingResultaten(); }
         else if (scherm === 'docent-dashboard') laadDocentDashboard();
         else if (scherm === 'docent-leerling-voortgang') {
             // Wordt aangeroepen via functie
@@ -144,13 +127,43 @@ window.maakKlasAan = async function() {
 }
 
 window.laadKlassen = async function() {
-    router.navigeer('klas');
+    try {
+        const response = await fetch('/api/Klas/');
+        if (!response.ok) throw new Error('Fout bij laden klassen');
+        const klassen = await response.json();
+        const template = Handlebars.compile(document.getElementById('klas-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ klassen: klassen });
+    } catch (error) {
+            console.error("Fout bij laden klassen:", error);
+            alert("Fout bij laden klassen. Probeer het later opnieuw.");
+    }
 }
 
-window.bekijkKlas = function(id) {
-    router.navigeer('klas-details', { klasId: id });
+window.bekijkKlasDetails = async function(id) {
+    try {
+        const response = await fetch(`/api/Klas/${id}`);
+        if (!response.ok) throw new Error('Fout bij laden klas details');
+        const klas = await response.json();
+        const template = Handlebars.compile(document.getElementById('klas-details-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ klas: klas });
+    } catch (error) {
+        console.error("Fout bij laden klas details:", error);
+        alert("Fout bij laden klas details. Probeer het later opnieuw.");
+    }
 }
 
+window.laadLeerlingResultaten = async function() {
+    try {
+        const response = await fetch(`/api/Resultaat/mijnresultaten`);
+        if (!response.ok) throw new Error('Fout bij laden leerling resultaten');
+        const resultaten = await response.json();
+        const template = Handlebars.compile(document.getElementById('leerling-dashboard-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ resultaten: resultaten });
+    } catch (error) {
+        console.error("Fout bij laden leerling resultaten:", error);
+        alert("Fout bij laden leerling resultaten. Probeer het later opnieuw.");
+    }
+}
 window.verwijderKlas = async function(id) {
     if (confirm("Weet je zeker dat je deze klas wilt verwijderen?")) {
         try {
