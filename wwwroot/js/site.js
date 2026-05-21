@@ -43,6 +43,10 @@
                     render("leerling-dashboard-template", { resultaten: data })
                 });
         }
+        else if (scherm === 'docent-dashboard') laadDocentDashboard();
+        else if (scherm === 'docent-leerling-voortgang') {
+            // Wordt aangeroepen via functie
+        }
 
 
         // Account gerelateerde schermen
@@ -234,6 +238,47 @@ window.verwijderLeerling = async function(klasId, leerlingId) {
             console.error("Fout bij verwijderen leerling:", error);
             alert("Netwerkfout bij verwijderen leerling.");
         }
+    }
+}
+
+window.laadDocentDashboard = async function() {
+    try {
+        const response = await fetch('/api/Resultaat/mijnleerlingen');
+        if (!response.ok) throw new Error('Fout bij laden leerlingen');
+        
+        const leerlingen = await response.json();
+        
+        const template = Handlebars.compile(document.getElementById('docent-dashboard-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ leerlingen: leerlingen });
+    } catch (error) {
+        console.error("Fout bij laden docent dashboard:", error);
+        alert("Fout bij laden van leerlingenoverzicht.");
+    }
+}
+
+window.bekijkLeerlingVoortgang = async function(leerlingId) {
+    try {
+        const response = await fetch(`/api/Resultaat/leerlingvoortgang/${leerlingId}`);
+        if (!response.ok) {
+            if (response.status === 403) {
+                alert("Je hebt geen toegang tot deze leerling.");
+                return;
+            }
+            throw new Error('Fout bij laden voortgang');
+        }
+        
+        const data = await response.json();
+        
+        const template = Handlebars.compile(document.getElementById('docent-leerling-voortgang-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ 
+            leerlingNaam: data.leerlingNaam,
+            leerlingEmail: data.leerlingEmail,
+            klasNaam: data.klasNaam,
+            resultaten: data.resultaten
+        });
+    } catch (error) {
+        console.error("Fout bij laden leerling voortgang:", error);
+        alert("Fout bij laden van leerling voortgang.");
     }
 }
 

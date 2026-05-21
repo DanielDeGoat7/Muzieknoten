@@ -326,3 +326,95 @@
         </div>
     </div>
 </script>
+
+<script id="docent-dashboard-template" type="text/x-handlebars-template">
+    <div class="view">
+        <h1>Mijn Leerlingen</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Leerlingenoverzicht</h5>
+                
+                {{#if leerlingen.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Niveau</th>
+                                    <th>Klas</th>
+                                    <th>Resultaten</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each leerlingen}}
+                                <tr onclick="bekijkLeerlingVoortgang({{this.leerlingId}})" style="cursor: pointer;">
+                                    <td>{{this.email}}</td>
+                                    <td><span class="badge bg-secondary">{{this.niveau}}</span></td>
+                                    <td>{{this.klasNaam}}</td>
+                                    <td>{{this.aantalResultaten}}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); bekijkLeerlingVoortgang({{this.leerlingId}})">Bekijk</button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Je hebt nog geen leerlingen in je klassen.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="docent-leerling-voortgang-template" type="text/x-handlebars-template">
+    <div class="view">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Voortgang: {{leerlingNaam}}</h1>
+            <button class="btn btn-secondary" onclick="router.navigeer('docent-dashboard')">← Terug</button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Leerlinggegevens</h5>
+                <p><strong>Email:</strong> {{leerlingEmail}}</p>
+                <p><strong>Klas:</strong> {{klasNaam}}</p>
+                <p><strong>Aantal oefeningen gemaakt:</strong> {{resultaten.length}}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resultaten</h5>
+                
+                {{#if resultaten.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Oefening</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each resultaten}}
+                                <tr>
+                                    <td>{{formatDate this.datum}}</td>
+                                    <td>{{this.oefeningNaam}}</td>
+                                    <td>{{this.weergaveScore}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Deze leerling heeft nog geen oefeningen gemaakt.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>

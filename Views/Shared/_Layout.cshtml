@@ -36,7 +36,8 @@
                         @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Docent"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="#" onclick="router.navigeer('dashboard')">Dashboard</a>
+                                <a class="nav-link text-dark" href="#"
+                                   onclick="router.navigeer('docent-dashboard')">Dashboard</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" href="#" onclick="router.navigeer('klas')">Klas</a>
