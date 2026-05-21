@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Piano.Data;
 using Microsoft.AspNetCore.Identity;
+using Piano.Identity;
 using System.Text.Json;
 
 
@@ -30,6 +31,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Password.RequireUppercase = true;
 })
 .AddRoles<IdentityRole>()
+.AddErrorDescriber<DutchIdentityErrorDescriber>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
