@@ -23,20 +23,13 @@
         else if (scherm === 'speel-bass') render("bass-clef-template", extraData);
         else if (scherm === 'speel-beide') render("beide-clef-template", extraData);
         else if (scherm === 'home') render("home-template");
-        else if (scherm === 'klas') {
-            console.log("Navigeren naar klas");
-            fetch('/api/Klas/')
-                .then(response => response.json())
-                .then(data => {
-                    render("klas-template", { klassen: data })
-                });
+        else if (scherm === 'klas') { laadKlassen(); }
+        else if (scherm === 'klas-details') { bekijkKlasDetails(extraData.klasId); }
+        else if (scherm === 'leerling-dashboard') { laadLeerlingResultaten(); }
+        else if (scherm === 'docent-dashboard') laadDocentDashboard();
+        else if (scherm === 'docent-leerling-voortgang') {
+            // Wordt aangeroepen via functie
         }
-        else if (scherm === 'klas-details') 
-            fetch(`/api/Klas/${extraData.klasId}`)
-                .then(response => response.json())  
-                .then(data => {
-                    render("klas-details-template", { klas: data })
-                }); 
 
 
         // Account gerelateerde schermen
@@ -45,6 +38,18 @@
         else if (scherm === 'register') render("register-template");
     }
 };
+
+Handlebars.registerHelper('formatDate', function(dateString) {
+    if (!dateString) return 'Onbekend';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+});
 
 window.showLogin = () => router.navigeer('login');
 window.showRegister = () => router.navigeer('register');
@@ -122,13 +127,43 @@ window.maakKlasAan = async function() {
 }
 
 window.laadKlassen = async function() {
-    router.navigeer('klas');
+    try {
+        const response = await fetch('/api/Klas/');
+        if (!response.ok) throw new Error('Fout bij laden klassen');
+        const klassen = await response.json();
+        const template = Handlebars.compile(document.getElementById('klas-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ klassen: klassen });
+    } catch (error) {
+            console.error("Fout bij laden klassen:", error);
+            alert("Fout bij laden klassen. Probeer het later opnieuw.");
+    }
 }
 
-window.bekijkKlas = function(id) {
-    router.navigeer('klas-details', { klasId: id });
+window.bekijkKlasDetails = async function(id) {
+    try {
+        const response = await fetch(`/api/Klas/${id}`);
+        if (!response.ok) throw new Error('Fout bij laden klas details');
+        const klas = await response.json();
+        const template = Handlebars.compile(document.getElementById('klas-details-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ klas: klas });
+    } catch (error) {
+        console.error("Fout bij laden klas details:", error);
+        alert("Fout bij laden klas details. Probeer het later opnieuw.");
+    }
 }
 
+window.laadLeerlingResultaten = async function() {
+    try {
+        const response = await fetch(`/api/Resultaat/mijnresultaten`);
+        if (!response.ok) throw new Error('Fout bij laden leerling resultaten');
+        const resultaten = await response.json();
+        const template = Handlebars.compile(document.getElementById('leerling-dashboard-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ resultaten: resultaten });
+    } catch (error) {
+        console.error("Fout bij laden leerling resultaten:", error);
+        alert("Fout bij laden leerling resultaten. Probeer het later opnieuw.");
+    }
+}
 window.verwijderKlas = async function(id) {
     if (confirm("Weet je zeker dat je deze klas wilt verwijderen?")) {
         try {
@@ -216,6 +251,47 @@ window.verwijderLeerling = async function(klasId, leerlingId) {
             console.error("Fout bij verwijderen leerling:", error);
             alert("Netwerkfout bij verwijderen leerling.");
         }
+    }
+}
+
+window.laadDocentDashboard = async function() {
+    try {
+        const response = await fetch('/api/Resultaat/mijnleerlingen');
+        if (!response.ok) throw new Error('Fout bij laden leerlingen');
+        
+        const leerlingen = await response.json();
+        
+        const template = Handlebars.compile(document.getElementById('docent-dashboard-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ leerlingen: leerlingen });
+    } catch (error) {
+        console.error("Fout bij laden docent dashboard:", error);
+        alert("Fout bij laden van leerlingenoverzicht.");
+    }
+}
+
+window.bekijkLeerlingVoortgang = async function(leerlingId) {
+    try {
+        const response = await fetch(`/api/Resultaat/leerlingvoortgang/${leerlingId}`);
+        if (!response.ok) {
+            if (response.status === 403) {
+                alert("Je hebt geen toegang tot deze leerling.");
+                return;
+            }
+            throw new Error('Fout bij laden voortgang');
+        }
+        
+        const data = await response.json();
+        
+        const template = Handlebars.compile(document.getElementById('docent-leerling-voortgang-template').innerHTML);
+        document.getElementById('app-container').innerHTML = template({ 
+            leerlingNaam: data.leerlingNaam,
+            leerlingEmail: data.leerlingEmail,
+            klasNaam: data.klasNaam,
+            resultaten: data.resultaten
+        });
+    } catch (error) {
+        console.error("Fout bij laden leerling voortgang:", error);
+        alert("Fout bij laden van leerling voortgang.");
     }
 }
 
