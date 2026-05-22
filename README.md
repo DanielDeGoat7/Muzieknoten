@@ -7,12 +7,13 @@ Volg onderstaande stappen om de Muzieknoten applicatie lokaal te draaien
 ### Systeem Vereisten
 | Vereiste | Versie |
 | :--- | :--- |
-| **.NET ** | 10 |
+| **.NET** | 10 |
 
 ### Visual Studio
 ### Stap 1 - Repository clonen
 Klik op "Clone a repository" (of ga naar File → Clone Repository)
-Vul bij repository locatie in: https://github.com/DanielDeGoat7/Muzieknoten.git
+Vul bij repository locatie in: 
+`https://github.com/DanielDeGoat7/Muzieknoten.git`
 Kies een lokale map en klik op "Clone"
 
 ### Stap 2 - Database aanmaken
