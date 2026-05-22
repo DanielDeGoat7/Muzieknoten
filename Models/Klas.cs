@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Piano.Models;
 
 public class Klas
@@ -5,6 +7,6 @@ public class Klas
     public int Id { get; set; }
     public string Naam { get; set; } = string.Empty;
     public List<Leerling> Leerlingen { get; set; } = new List<Leerling>();
-    public int DocentId { get; set; }
-    public Docent? Docent { get; set; }
+    public string DocentIdentityUserId { get; set; } = string.Empty;
+    public virtual Docent? Docent { get; set; }
 }

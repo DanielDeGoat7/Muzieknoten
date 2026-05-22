@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Piano.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Piano.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -18,32 +19,44 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Leerling>().HasData(
-            new Leerling { Id = 1, Naam = "Anna Jansen", Niveau = Niveau.Beginner, KlasId = 1 },
-            new Leerling { Id = 2, Naam = "Bram de Vries", Niveau = Niveau.Gevorderd, KlasId = 1 },
-            new Leerling { Id = 3, Naam = "Sofia Bakker", Niveau = Niveau.Expert, KlasId = 2 }
-        );
+        modelBuilder.Entity<Docent>(entity =>
+        {
+            entity.HasOne(d => d.IdentityUser)
+                .WithMany()
+                .HasForeignKey(d => d.IdentityUserId)
+                .IsRequired(false);
+        });
 
-        modelBuilder.Entity<Docent>().HasData(
-            new Docent { Id = 1, Naam = "Daniël Dedden" },
-            new Docent { Id = 2, Naam = "Jan de Boer" }
-        );
+        modelBuilder.Entity<Klas>()
+            .HasOne(k => k.Docent)
+            .WithMany(d => d.Klassen)
+            .HasForeignKey(k => k.DocentIdentityUserId)
+            .HasPrincipalKey(d => d.IdentityUserId);
 
-        modelBuilder.Entity<Klas>().HasData(
-            new Klas { Id = 1, Naam = "PianoX1", DocentId = 1 },
-            new Klas { Id = 2, Naam = "PianoX2", DocentId = 2 }
-        );
+        modelBuilder.Entity<Resultaat>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId);
+
+        modelBuilder.Entity<Resultaat>()
+            .HasOne(r => r.Oefening)
+            .WithMany()
+            .HasForeignKey(r => r.OefeningId);
+
+        modelBuilder.Entity<Leerling>()
+            .HasOne(l => l.Klas)
+            .WithMany(k => k.Leerlingen)
+            .HasForeignKey(l => l.KlasId);
+
+        modelBuilder.Entity<Leerling>()
+            .HasOne(l => l.IdentityUser)
+            .WithMany()
+            .HasForeignKey(l => l.IdentityUserId);
 
         modelBuilder.Entity<Oefening>().HasData(
-            new Oefening { Id = 1, Naam = "Oefening 1", Niveau = Niveau.Beginner },
-            new Oefening { Id = 2, Naam = "Oefening 2", Niveau = Niveau.Gevorderd },
-            new Oefening { Id = 3, Naam = "Oefening 3", Niveau = Niveau.Expert }
-        );
-
-        modelBuilder.Entity<Resultaat>().HasData(
-            new Resultaat { Id = 1, Score = 85, datetime = new DateTime(2026, 4, 14), LeerlingId = 1, OefeningId = 1 },
-            new Resultaat { Id = 2, Score = 92, datetime = new DateTime(2026, 4, 14), LeerlingId = 2, OefeningId = 2 },
-            new Resultaat { Id = 3, Score = 98, datetime = new DateTime(2026, 4, 14), LeerlingId = 3, OefeningId = 3 }
+            new Oefening { Id = 1, Naam = "Treble Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 2, Naam = "Bass Clef", Niveau = Niveau.Beginner },
+            new Oefening { Id = 3, Naam = "Beide Clefs", Niveau = Niveau.Beginner }
         );
 
     }

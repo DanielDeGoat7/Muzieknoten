@@ -69,6 +69,62 @@ body {
   text-align: center;
 }
 
+.notenbalk-svg {
+    width: 100%;          
+    max-width: 500px;    
+    height: auto;         
+    aspect-ratio: 4 / 3;  
+    margin: 10px auto;
+    display: block;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+
+
+.noot-svg {
+   
+    transition: cy 0.2s ease-in-out; 
+}
+
+
+.btn-group-mobile {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-noot-guess {
+    flex: 1 1 40px; 
+    min-width: 44px; 
+    height: 44px;
+    border: 2px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    font-weight: bold;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.feedback-text {
+    font-size: 1.1rem;
+    font-weight: bold;
+    min-height: 24px;
+    margin-bottom: 10px;
+}
+
+.btn-stop-opslaan {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 
 @media (min-width: 768px) {
   html {

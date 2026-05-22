@@ -7,6 +7,8 @@
 <script id="home-template" type="text/x-handlebars-template">
     <div class="view text-center">
     <h1>Welkom bij Muzieknoten</h1>
+    <p>Oefen je notenkennis met onze interactieve oefeningen</p>
+    <p>Veel plezier met oefenen! 🎶</p>
     </div>
 </script>
 
@@ -15,12 +17,13 @@
     <div class="oefening-box">
     <p class="box-title">Kies hier wat je wilt oefenen</p>
     <div class="box-grid">
-    <button class="oefening-grid-item" onclick="speelOefening(1, 'Treble Clef')">Treble Cleff</button>
-    <div class="oefening-grid-item disabled">Noten op piano</div>
-    <div class="oefening-grid-item disabled">Bass Clef</div>
-    <div class="oefening-grid-item disabled">Perfect Pitch</div>
-    <div class="oefening-grid-item disabled">Voortekens</div>
-    <div class="oefening-grid-item disabled">Intervals</div>
+    {{#each oefeningen}}
+    <button class="oefening-grid-item" onclick="speelOefening({{id}}, '{{naam}}', '{{naam}}')">
+    {{naam}}
+    </button>
+    {{else}}
+    <p>Geen oefeningen gevonden...</p>
+    {{/each}}
     </div>
     </div>
     </div>
@@ -28,11 +31,392 @@
 
 <script id="treble-clef-template" type="text/x-handlebars-template">
     <div class="view text-center">
-    <h1>Oefening: {{oefeningNaam}}</h1>
-    <div class="piano-placeholder">
-    <p>ToDo: Notenbalken voor Treble Clef...</p>
-    <hr>
-    <button class="btn-save-score" onclick="verstuurScore({{oefeningId}})">Oefening afronden</button>
+    <h2>{{oefeningNaam}}</h2>
+        
+    <div class="oefening-scherm">
+
+    <svg viewBox="0 0 200 160" class="notenbalk-svg">
+
+    <text x="25" y="82" font-size="55" font-family="serif" text-anchor="middle" dominant-baseline="central">𝄞</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+
+    <ellipse id="treble-note" cx="100" cy="80" rx="8" ry="6" fill="black" class="noot-svg" />
+    </svg>
+
+    <div id="treble-feedback" class="feedback-text">
+    Klik op de juiste noot...
     </div>
+
+    <div id="treble-teller" class="teller-text">
+    Beantwoord: 0 | Goed: 0
+    </div>
+
+    <div class="btn-group-mobile">
+    <button class="btn-noot-guess" onclick="checkAntwoord('A')">A</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('B')">B</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('C')">C</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('D')">D</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('E')">E</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('F')">F</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('G')">G</button>
+    </div>
+    </div>
+
+    <hr>
+        
+    <button class="btn-stop-opslaan" onclick="stopEnOpslaan()">
+    Stoppen & Score Opslaan
+    </button>
+    </div>
+</script>
+
+<script id="bass-clef-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h2>{{oefeningNaam}}</h2>
+        
+    <div class="oefening-scherm">
+
+    <svg viewBox="0 0 200 160" class="notenbalk-svg">
+
+    <text x="30" y="95" font-size="45" font-family="serif" text-anchor="middle">𝄢</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+    <ellipse id="bass-note" cx="100" cy="100" rx="8" ry="6" fill="black" class="noot-svg" />
+    </svg>
+
+    <div id="bass-feedback" class="feedback-text">
+    Klik op de juiste noot...
+    </div>
+
+    <div id="bass-teller" class="teller-text">
+    Beantwoord: 0 | Goed: 0
+    </div>
+
+    <div class="btn-group-mobile">
+    <button class="btn-noot-guess" onclick="checkAntwoord('A')">A</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('B')">B</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('C')">C</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('D')">D</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('E')">E</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('F')">F</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('G')">G</button>
+    </div>
+    </div>
+
+    <hr>
+        
+    <button class="btn-stop-opslaan" onclick="stopEnOpslaan()">
+    Stoppen & Score Opslaan
+    </button>
+    </div>
+</script>
+
+<script id="beide-clef-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h2>{{oefeningNaam}}</h2>
+        
+    <div class="oefening-scherm">
+
+
+    <svg viewBox="0 0 200 260" class="notenbalk-svg">
+
+    <g transform="translate(-40, -50) scale(1.5)">
+    
+    <text x="25" y="82" font-size="55" font-family="serif" text-anchor="middle" dominant-baseline="central">𝄞</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+    <ellipse id="treble-note" cx="100" cy="80" rx="8" ry="6" fill="black" class="noot-svg" />
+    </g>
+
+    <g transform="translate(-33, 80) scale(1.5)">
+    <text x="30" y="95" font-size="45" font-family="serif" text-anchor="middle">𝄢</text>
+
+    <line x1="10" y1="60" x2="190" y2="60" stroke="black" />
+    <line x1="10" y1="70" x2="190" y2="70" stroke="black" />
+    <line x1="10" y1="80" x2="190" y2="80" stroke="black" />
+    <line x1="10" y1="90" x2="190" y2="90" stroke="black" />
+    <line x1="10" y1="100" x2="190" y2="100" stroke="black" />
+
+    <ellipse id="bass-note" cx="100" cy="100" rx="8" ry="6" fill="black" class="noot-svg" />
+    </g>
+    </svg>
+
+    
+
+    <div id="beide-feedback" class="feedback-text">
+    Klik op de juiste noot...
+    </div>
+
+    <div id="beide-teller" class="teller-text">
+    Beantwoord: 0 | Goed: 0
+    </div>
+
+    <div class="btn-group-mobile">
+    <button class="btn-noot-guess" onclick="checkAntwoord('A')">A</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('B')">B</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('C')">C</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('D')">D</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('E')">E</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('F')">F</button>
+    <button class="btn-noot-guess" onclick="checkAntwoord('G')">G</button>
+    </div>
+    </div>
+
+    <hr>
+        
+    <button class="btn-stop-opslaan" onclick="stopEnOpslaan()">
+    Stoppen & Score Opslaan
+    </button>
+    </div>
+</script>
+
+<script id="klas-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+    <h1>Klassen</h1>
+        
+    <div class="klas-container">
+    <button class="btn btn-primary" onclick="toonKlasAanmakenForm()">
+    + Nieuwe Klas Aanmaken
+    </button>
+
+    <div id="klas-aanmaken-form" style="display: none; margin-top: 20px;">
+    <div class="card">
+    <div class="card-body">
+    <h5 class="card-title">Nieuwe klas aanmaken</h5>
+    <input type="text" id="klas-naam" class="form-control" placeholder="Klas naam" />
+    <button class="btn btn-success mt-2" onclick="maakKlasAan()">Aanmaken</button>
+    <button class="btn btn-secondary mt-2" onclick="annuleerKlasAanmaken()">Annuleren</button>
+    </div>
+    </div>
+    </div>
+
+    <div id="klassen-lijst" class="mt-4">
+    <h3>Bestaande klassen</h3>
+    {{#if klassen.length}}
+    <div class="row">
+    {{#each klassen}}
+    <div class="col-md-4 mb-3">
+    <div class="card">
+    <div class="card-body">
+    <h5 class="card-title">{{this.naam}}</h5>
+    <button class="btn btn-sm btn-info" onclick="bekijkKlasDetails({{this.id}})">Bekijk</button>
+    <button class="btn btn-sm btn-danger" onclick="verwijderKlas({{this.id}})">Verwijder</button>
+    </div>
+    </div>
+    </div>
+    {{/each}}
+    </div>
+    {{else}}
+    <p>Geen klassen gevonden. Klik op "Nieuwe Klas Aanmaken" om te beginnen.</p>
+    {{/if}}
+    </div>
+    </div>
+    </div>
+</script>
+
+<script id="klas-details-template" type="text/x-handlebars-template">
+    <div class="view">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>{{klas.naam}}</h1>
+            <button class="btn btn-secondary" onclick="router.navigeer('klas')">← Terug</button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Klas informatie</h5>
+                <p><strong>Docent:</strong> {{klas.docentNaam}}</p>
+                <p><strong>Aantal leerlingen:</strong> {{klas.leerlingen.length}}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Leerlingen</h5>
+                    <button class="btn btn-primary btn-sm" onclick="toonLeerlingToevoegenForm({{klas.id}})">
+                        + Leerling toevoegen
+                    </button>
+                </div>
+                
+                {{#if klas.leerlingen.length}}
+                    <div class="list-group">
+                        {{#each klas.leerlingen}}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{this.naam}}</strong>
+                                        <span class="badge bg-secondary ms-2">{{this.niveau}}</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-danger" 
+                                            onclick="verwijderLeerling({{../klas.id}}, {{this.id}})">
+                                        Verwijder
+                                    </button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <p class="text-muted">Nog geen leerlingen in deze klas.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    <div id="leerling-toevoegen-form" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); width: 90%; max-width: 400px;">
+        <h3 class="mb-3">Leerling toevoegen</h3>
+        <div class="mb-3">
+            <label class="form-label">Emailadres *</label>
+            <input type="email" id="leerling-email" class="form-control" placeholder="leerling@school.nl">
+            <small class="text-muted">De leerling moet al geregistreerd zijn</small>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" onclick="voegLeerlingToe()">Toevoegen</button>
+            <button class="btn btn-secondary" onclick="annuleerLeerlingToevoegen()">Annuleren</button>
+        </div>
+    </div>
+</script>
+
+<script id="leerling-dashboard-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+        <h1>Mijn Voortgang</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resultaten</h5>
+                
+                {{#if resultaten.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Oefening</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each resultaten}}
+                                <tr>
+                                    <td>{{formatDate this.datum}}</td>
+                                    <td>{{this.oefeningNaam}}</td>
+                                    <td>{{this.weergaveScore}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Nog geen resultaten. Maak eerst een oefening!</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="docent-dashboard-template" type="text/x-handlebars-template">
+    <div class="view text-center">
+        <h1>Mijn Leerlingen</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Leerlingenoverzicht</h5>
+                
+                {{#if leerlingen.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Niveau</th>
+                                    <th>Klas</th>
+                                    <th>Resultaten</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each leerlingen}}
+                                <tr onclick="bekijkLeerlingVoortgang({{this.leerlingId}})" style="cursor: pointer;">
+                                    <td>{{this.email}}</td>
+                                    <td><span class="badge bg-secondary">{{this.niveau}}</span></td>
+                                    <td>{{this.klasNaam}}</td>
+                                    <td>{{this.aantalResultaten}}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); bekijkLeerlingVoortgang({{this.leerlingId}})">Bekijk</button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Je hebt nog geen leerlingen in je klassen.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="docent-leerling-voortgang-template" type="text/x-handlebars-template">
+    <div class="view">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Voortgang: {{leerlingNaam}}</h1>
+            <button class="btn btn-secondary" onclick="router.navigeer('docent-dashboard')">← Terug</button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Leerlinggegevens</h5>
+                <p><strong>Email:</strong> {{leerlingEmail}}</p>
+                <p><strong>Klas:</strong> {{klasNaam}}</p>
+                <p><strong>Aantal oefeningen gemaakt:</strong> {{resultaten.length}}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resultaten</h5>
+                
+                {{#if resultaten.length}}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Oefening</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each resultaten}}
+                                <tr>
+                                    <td>{{formatDate this.datum}}</td>
+                                    <td>{{this.oefeningNaam}}</td>
+                                    <td>{{this.weergaveScore}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Deze leerling heeft nog geen oefeningen gemaakt.</p>
+                {{/if}}
+            </div>
+        </div>
     </div>
 </script>
