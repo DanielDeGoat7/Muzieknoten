@@ -116,7 +116,7 @@ public class LeerlingToevoegenAanKlasTest
     }
 
     [TestMethod]
-    public async Task AddLeerlingToKlasDocentGeeftBadRequest()
+    public async Task AddDocentToKlasGeeftBadRequest()
     {
         // Arrange
         var dto = new AddLeerlingDto { Email = "docent@test.nl" };
