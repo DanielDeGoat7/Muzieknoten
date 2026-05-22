@@ -8,7 +8,6 @@ using Piano.Models;
 
 namespace Piano.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
@@ -28,7 +27,12 @@ namespace Piano.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return BadRequest("Gebruiker niet gevonden");
+                return Ok(new
+                {
+                    succes = true,
+                    message = "Login om je score op te slaan!",
+                    isGast = true
+                });
             }
 
             int score = (int)Math.Round((double)goedeAntwoorden / aantalVragen * 100);
@@ -49,7 +53,8 @@ namespace Piano.Controllers
             {
                 succes = true,
                 message = "Score succesvol opgeslagen",
-                resultaat
+                resultaat,
+                isGast = false
             });
         }
 
@@ -60,6 +65,5 @@ namespace Piano.Controllers
             var oefeningen = await _context.Oefeningen.ToListAsync();
             return Ok(oefeningen);
         }
-
     }
 }
