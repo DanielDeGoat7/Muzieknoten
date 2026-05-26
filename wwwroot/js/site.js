@@ -3,6 +3,19 @@
         const container = document.getElementById('app-container') || document.getElementById('account-app-container');
         if (!container) return;
 
+        if (scherm !== 'speel-treble' && scherm !== 'speel-bass' && scherm !== 'speel-beide') {
+            if (actieveOefening && actieveOefening.totaalVragen > 0) {
+                    window.verstuurScoreNaarServer(
+                        actieveOefening.goedeAntwoorden, 
+                        actieveOefening.totaalVragen, 
+                        actieveOefening.huidigeOefeningId
+                    );
+                actieveOefening = null;
+                } else if (actieveOefening) {
+                    actieveOefening = null;
+                }
+        }
+
         const render = (templateId, data = {}) => {
             const element = document.getElementById(templateId);
             if (!element) return;
@@ -500,7 +513,6 @@ window.speelOefening = function(id, naam, oefeningType) {
         actieveOefening.speelOefening(id, naam);
     }
 }
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
