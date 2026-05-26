@@ -501,6 +501,22 @@ window.speelOefening = function(id, naam, oefeningType) {
     }
 }
 
+window.resetOefening = function() {
+    if (actieveOefening) {
+        if (actieveOefening.totaalVragen > 0) {
+            alert("Je hebt " + actieveOefening.totaalVragen + " vragen beantwoord. De score is opgeslagen");
+            window.verstuurScoreNaarServer(
+                actieveOefening.goedeAntwoorden, 
+                actieveOefening.totaalVragen, 
+                actieveOefening.huidigeOefeningId
+            );
+        }
+
+        actieveOefening = null;
+    }
+
+}
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
